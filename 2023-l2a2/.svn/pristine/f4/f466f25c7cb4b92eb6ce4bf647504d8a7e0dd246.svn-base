@@ -1,0 +1,81 @@
+import React, { useState, useEffect,useRef } from "react";
+import HeaderExamine from "../components/HeaderExamine";
+import { Container, Button } from "react-bootstrap";
+import Examen from "../components/Examen";
+import "./style/ExamPage.css";
+import { useParams} from "react-router-dom";
+
+const ExamPage = () => {
+  const { id,id_examen, duree } = useParams();
+  const [reponsesSelectionnees, setReponsesSelectionnees] = useState([]);
+  const [termine , setTermine]= useState(false);
+  const [timer, setTimer] = useState(parseInt(duree) * 60);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    const countdown = () => {
+      setTimer((prevTimer) => {
+        if (prevTimer > 0) {
+          return prevTimer - 1;
+        } else {
+          clearInterval(intervalRef.current);  
+          setTermine(true);
+          return 0;
+        }
+      });
+    };
+
+    intervalRef.current = setInterval(countdown, 1000);  
+
+    return () => clearInterval(intervalRef.current);  
+  }, []);
+
+  useEffect(() => {
+    const storedTimer = localStorage.getItem('timer examen');
+    if (storedTimer) {
+      setTimer(parseInt(storedTimer));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('timer examen', timer.toString());
+  }, [timer]);
+
+  const formatTime = (seconds) => {
+    const heures = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secondesRestantes = seconds % 60;
+    return `${heures}:${String(minutes).padStart(2, "0")}:${String(secondesRestantes).padStart(2, "0")}`;
+  };
+
+  const soumettre =() => {
+    setTermine(true);
+    
+  }
+  return (
+    <div>
+      <HeaderExamine />
+
+      <div
+        style={{
+          backgroundColor: "rgba(142, 202, 230, 0.34)",
+          minHeight: "100vh",
+          padding: "20px 0",
+        }}
+      >
+        <div className="sticky_container">
+          <div className="timer">{formatTime(timer)}</div> <br />  
+          <Button variant="danger" onClick ={soumettre}>Finir et soumettre</Button>
+        </div>
+
+        <Container fluid className="contentContainer">
+          <div className="Questions">
+            <Examen id_examen={id_examen} etat = {termine} />
+          </div>
+        </Container>
+      </div>
+    </div>
+  );
+};
+
+export default ExamPage;

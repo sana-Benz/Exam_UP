@@ -1,0 +1,19 @@
+import React from 'react'
+import MenuExaminateur from "../components/MenuExaminateur";
+import NavbarProfil from "../components/NavbarProfil";
+
+
+const HeaderExaminateur = () => {
+  const urlLogo ="/";
+  //ici le nom et prénom sont statique mais il faut implémenter la logique d'accès à la database
+  const nom = "BEN SLAMA"
+  const prenom ="Sana"
+  return (
+      <div>
+              <NavbarProfil nom={nom} prenom={prenom} homePageURL={urlLogo} />
+              <MenuExaminateur />
+      </div>
+  )
+}
+
+export default HeaderExaminateur

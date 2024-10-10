@@ -1,0 +1,66 @@
+.Big_Container {
+  width: 880px;
+  padding: 10px 20px;
+  gap: 30px;
+  background-color: white;
+}
+
+.Smaller_Container {
+  display: flex;
+  flex-direction: column;
+}
+
+.response_container {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  gap: 30px;
+}
+
+label {
+  font-family: Montserrat;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 39.01px;
+  text-align: left;
+  color: #023047;
+}
+
+
+.reponse {
+  width: 20px;
+  height: 20px;
+  background-color: rgba(251, 133, 0, 1);
+}
+
+
+.reponseA {
+  width: 20px;
+  height: 20px;
+  background-color: rgba(251, 133, 0, 1);
+}
+
+
+.reponse + label,
+.reponseA + label {
+  margin-left: 10px;
+}
+
+
+.reponse:checked + label,
+.reponseA:checked + label {
+  background-color: rgba(251, 133, 0, 1);
+}
+
+.consigne {
+  font-family: Montserrat;
+  font-size: 27px;
+  color: #023047;
+  font-weight: 600;
+  line-height: 39.01px;
+}
+
+.reponseA,
+.reponse {
+  display: initial; 
+}

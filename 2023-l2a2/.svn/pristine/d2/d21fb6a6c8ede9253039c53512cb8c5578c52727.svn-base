@@ -1,0 +1,42 @@
+import React, { useState, useEffect } from "react";
+import QuestionExamen from './QuestionExamen'
+import { useLocation } from 'react-router-dom';
+
+const Examen = ({id_examen ,etat}) => {
+  const [arrayQuestionId, setArrayQuestionId] = useState([]);
+  
+
+
+  //chercher la liste des ids des questions de l'examen à partir de l'id de l'examen
+  useEffect(() => {
+    const getQuestionList = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/questions_examen/${id_examen}`
+        );
+        const jasonData = await response.json();
+        setArrayQuestionId(jasonData);
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+    getQuestionList();
+  }, [id_examen]);
+
+
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+    {arrayQuestionId.map((questionId , index) => (
+      <div key={index} style={{ marginTop: "10px", marginRight: "10px" }}>
+        
+        {console.log("Question ID:", questionId)}
+        <QuestionExamen id_question={questionId.id} etat ={etat} id_examen={id_examen}/>
+      </div>
+    ))}
+  </div>
+ 
+  )
+}
+
+export default React.memo(Examen);

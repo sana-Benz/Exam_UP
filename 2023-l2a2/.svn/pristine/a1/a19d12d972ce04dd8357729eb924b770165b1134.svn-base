@@ -1,0 +1,56 @@
+import React, { PureComponent } from 'react'
+import ExamCard from './ExamCard';
+import  Container  from 'react-bootstrap/Container';
+
+export class ExamFolder extends PureComponent {
+    render() {
+      const endedExams = [
+        {id: 1,title: 'Examen Mathématiques semestre 1'},
+        {id: 2,title: 'Examen Droit Informatique '},
+        {id: 3,title: 'Contrôle continu Anglais'},
+      ];
+      return (
+        <Container>
+        <div style={styles.titleContainer}>
+          <h2 style={styles.title}>Examens passés :</h2>
+        </div>
+        <div style={styles.cardsContainer}>
+          {endedExams.map((endedExam, index) => (
+            <ExamCard key={index} exam={endedExam} cardStyle={styles.card} />
+          ))}
+        </div>
+      </Container>
+      );
+    }
+  }
+  
+  const styles = {
+    cardsContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+    },
+    card: {
+      backgroundColor: '#FF5733', 
+      color: '#fff',
+      width: '200px',
+      height: '150px',
+      margin: '10px',
+      padding: '20px',
+      borderRadius: '8px',
+    },
+    title: {
+      fontSize: '40px',
+      fontWeight: 'bold',
+      color: '#023047',
+      marginBottom: '20px',
+      textAlign: 'left',
+    },
+    titleContainer: {
+      marginLeft: '30px', 
+    },
+  };
+  
+  
+  
+  export default ExamFolder;

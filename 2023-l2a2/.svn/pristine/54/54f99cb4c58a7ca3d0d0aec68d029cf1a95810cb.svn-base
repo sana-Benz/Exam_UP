@@ -1,0 +1,185 @@
+import React, { useEffect, useState } from "react";
+import "../Pages/style/ReponseCreation.css";
+import { Form, Table, Button } from "react-bootstrap";
+import { Link, useParams } from "react-router-dom";
+import EditReponse from "./EditReponse";
+import { base_url } from "../../baseURL";
+
+const ReponseCrea = () => {
+  const { id, id_examen, id_question, type_q } = useParams();
+  console.log("voici le type de la question", type_q);
+
+  const [titre_O, setTitre_O] = useState(""); //texte de l'option de rép
+  const [valeur_O, setvaleur_O] = useState("false"); // correcte ou incorrecte
+  const [reponses, setReponses] = useState([]); //la liste des options de réponse
+
+  const nbReponsesCorrectes = reponses.filter(
+    (reponse) => reponse.vf === true
+  ).length;
+
+  const handleSelectChange = (e) => {
+    setvaleur_O(e.target.value);
+  };
+
+  // récupérer les réponses de la base de données #17
+  const getReponses = async () => {
+    try {
+      const response = await fetch(
+        `${base_url}reponses_possibles/${id_question}`
+      );
+      const responseData = await response.json();
+      setReponses(responseData); // Mettre à jour les réponses
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  useEffect(() => {
+    getReponses();
+  }, []);
+
+  //supprimer une option de réponse
+  const deleteOption = async (id_rep) => {
+    try {
+      const response = await fetch(
+        `${base_url}Supprimer_option_reponse/${id_rep}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Échec de la suppression de la réponse");
+      }
+      const jsonData = await response.json();
+      console.log("Suppression réussie:", jsonData);
+      setReponses(reponses.filter((r) => r.id !== id_rep));
+    } catch (err) {
+      console.error("Erreur lors de la suppression:", err);
+    }
+  };
+
+  // fonction pour ajouter une option de réponse
+  const onSubmitForm = async (e) => {
+    e.preventDefault();
+    console.log(titre_O, valeur_O);
+
+    if (type_q === "QCU") {
+      if (nbReponsesCorrectes >= 1 && valeur_O === "true") {
+        alert("Vous ne pouvez ajouter qu'une seule réponse correcte.");
+        return;
+      }
+    }
+
+    try {
+      const response = await fetch(
+        `${base_url}Ajouter_option_reponse/${id_question}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ titre_O, valeur_O }),
+        }
+      );
+      console.log("post request réussi");
+      const responseData = await response.json();
+      console.log(responseData);
+      setReponses([...reponses, responseData]);
+      window.location.href = `/infos_reponses/${id}/${id_examen}/${id_question}/${type_q}`;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const quitter = () => {
+    if (nbReponsesCorrectes === 0) {
+      alert("Il faut indiquer au moins une réponse juste par question");
+      return;
+    }
+
+    if (type_q === "QCU") {
+      if (nbReponsesCorrectes > 1) {
+        alert("Vous ne pouvez ajouter qu'une seule réponse correcte.");
+        return;
+      }
+    }
+
+
+    window.location.href = `/creationquestion/${id}/${id_examen}/cree`;
+  };
+
+  return (
+    <div className="big_container">
+      <div className="form_container">
+        <h1>Intitulé de la réponse</h1>
+        <Form onSubmit={onSubmitForm}>
+          <Form.Control
+            type="text"
+            className="form-control"
+            value={titre_O}
+            onChange={(e) => setTitre_O(e.target.value)}
+          />
+          <p>Indiquer si la réponse est :</p>
+          <Form.Select
+            aria-label="Default select example"
+            onChange={handleSelectChange}
+            value={valeur_O}
+          >
+            <option value="false">Incorrecte</option>
+            <option value="true">Correcte</option>
+          </Form.Select>
+
+          <Button type="submit" className="btn btn-primary">
+            Ajouter
+          </Button>
+        </Form>
+      </div>
+
+      <div className="table_container">
+        <Table bordered hover className="custom-table">
+          <thead>
+            <tr>
+              <th>valeur</th>
+              <th>texte de la réponse</th>
+              <th>Supprimer</th>
+              <th>Modifier</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reponses.map((reponse) => (
+              <tr key={reponse.id}>
+                <td
+                  style={{
+                    fontWeight: "bold",
+                    color: reponse.vf ? "green" : "red",
+                  }}
+                >
+                  {reponse.vf ? "correcte" : "incorrecte"}
+                </td>
+                <td>{reponse.texte}</td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => deleteOption(reponse.id)}
+                  >
+                    Supprimer
+                  </button>
+                </td>
+                <td>
+                  <EditReponse id_rep={reponse.id} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Button variant="dark" size="lg" onClick={quitter}>
+          Enregistrer et quitter
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default ReponseCrea;

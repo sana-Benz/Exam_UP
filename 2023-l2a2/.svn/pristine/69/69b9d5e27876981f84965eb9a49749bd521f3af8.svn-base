@@ -1,0 +1,137 @@
+import React, { useEffect, useState } from "react";
+import "../Pages/style/ReponseCreation.css";
+import { Form, Table, Button } from "react-bootstrap";
+import { Link,useParams } from "react-router-dom";
+
+const ReponseCrea = () => {
+  const { id, id_examen, id_question, type } = useParams();
+  console.log(id_question);
+
+  const [titre_O, setTitre_O] = useState("");//texte de l'option de rép
+  const [valeur_O, setvaleur_O] = useState("false");// correcte ou incorrecte
+  const [reponses, setReponses] = useState([]);
+
+  const handleSelectChange = (e) => {
+    setvaleur_O(e.target.value); 
+  };
+
+  // récupérer les réponses de la base de données #17
+  const getReponses = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3001/reponses_possibles/${id_question}`
+      );
+      const responseData = await response.json();
+      setReponses(responseData); // Mettre à jour les réponses
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  useEffect(() => {
+    getReponses();
+  }, []);
+
+  //supprimer une option de réponse
+
+
+
+  const deleteOption = async (id_rep) => { 
+    try {
+        const response = await fetch(`http://localhost:3001/Supprimer_option_reponse/${id_rep}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            throw new Error('Échec de la suppression de la réponse');
+        }
+        const jsonData = await response.json();
+        console.log('Suppression réussie:', jsonData);
+        setReponses(reponses.filter(r => r.id !== id_rep));
+    } catch (err) {
+        console.error('Erreur lors de la suppression:', err);
+    }
+    };
+
+
+  // fonction pour ajouter une option de réponse
+  const onSubmitForm = async (e) => {
+    e.preventDefault();
+    console.log(titre_O, valeur_O);
+    try {
+      const response = await fetch(
+        `http://localhost:3001/Ajouter_option_reponse/${id_question}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ titre_O, valeur_O }),
+        }
+      );
+      console.log("post request réussi");
+      const responseData = await response.json();
+      console.log(responseData);
+      setReponses([...reponses, responseData]);
+      window.location.href = `/infos_reponses/${id}/${id_examen}/${id_question}/${type}`;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  return (
+    <div className="big_container">
+      <div className="form_container">
+        <h1>Intitulé de la réponse</h1>
+        <Form onSubmit={onSubmitForm}>
+          <Form.Control
+            type="text"
+            className="form-control"
+            value={titre_O}
+            onChange={(e) => setTitre_O(e.target.value)}
+          />
+          <p>Indiquer si la réponse est :</p>
+          <Form.Select aria-label="Default select example" onChange={handleSelectChange} value={valeur_O}>
+            <option value="false">Incorrecte</option>
+            <option value="true">Correcte</option>
+          </Form.Select>
+
+          <Button type="submit" className="btn btn-primary" >
+            Ajouter
+          </Button>
+        </Form>
+      </div>
+
+      <div className="table_container">
+        <Table bordered hover className="custom-table">
+          <thead>
+            <tr>
+              <th>valeur</th>
+              <th>texte de la réponse</th>
+              <th>Supprimer</th>
+            </tr>
+          </thead>
+          <tbody>
+            {reponses.map((reponse) => (
+              <tr key={reponse.id}>
+                <td>{reponse.vf}</td>
+                <td>{reponse.texte}</td>
+                <td>
+                  <button className="btn btn-danger" onClick={() => deleteOption(reponse.id)}>Supprimer</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Link to={`/creationquestion/${id}/${id_examen}/cree`}>  
+        <Button variant="dark" size="lg">
+          Enregistrer et quitter
+        </Button>
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default ReponseCrea;

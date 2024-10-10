@@ -1,0 +1,33 @@
+.ExamCard {
+  width: 1302px;
+  height: 60px;
+  padding: 5px 24px;
+  margin: 10px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+  border: 2px solid #023047;
+  
+}
+
+.ExamCard:hover {
+  background-color: rgba(255, 183, 3, 0.7); 
+}
+
+.ExamCard .cardTitle {
+  font-weight: bold;
+  color: #023047;
+  text-align: left;
+}
+
+.card:hover .card-title {
+  color: white; 
+}
+
+.trash-icon {
+  position: absolute;
+  top: 18px;
+  right: 15px;
+  cursor: pointer;
+  color: #023047; 
+}

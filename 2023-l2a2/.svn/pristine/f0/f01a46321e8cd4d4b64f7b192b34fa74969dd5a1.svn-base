@@ -1,0 +1,166 @@
+import React, { useEffect, useState } from "react";
+import HeaderExaminateur from "../components/HeaderExaminateur.jsx";
+import { Table, Button, Container } from "react-bootstrap";
+import AddParticipant from "../components/AddParticipant.jsx";
+import { useParams } from "react-router-dom";
+import ModalComponent from "../components/ModalComponent.jsx";
+import { base_url } from "../../baseURL";
+
+const ParticipantsList = () => {
+  const { id, id_examen } = useParams();
+  const [showParticipantList, setShowParticipantList] = useState(true);
+  const [participants, setParticipants] = useState([]);
+
+  //fonction qui va chercher les participants à cet examen déjà dans la bdd
+  const getParticipants = async () => {
+    try {
+      const response = await fetch(
+        `${base_url}participants/${id}/${id_examen}`
+      );
+      const jasonData = await response.json();
+      setParticipants(jasonData);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  useEffect(() => {
+    getParticipants();
+  }, []);
+
+  //supprimer un participant de la liste
+  const deleteParticipant = async (id_examine) => {
+    try {
+      await fetch(`${base_url}participants/${id}/${id_examine}`, {
+        method: "DELETE",
+      });
+
+      // recharger la liste de participant après suppression
+      const response = await fetch(
+        `${base_url}participants/${id}/${id_examen}`
+      );
+      const data = await response.json();
+      setParticipants(data);
+
+      setParticipants(
+        participants.filter((participant) => participant.id !== id_examine)
+      );
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  //supprimer tous les participants
+  const deleteParticipants = async (id_examine) => {
+    try {
+      await fetch(`${base_url}supprimer_liste_participants/${id}/${id_examen}`, {
+        method: "DELETE",
+      });
+      window.location.reload();
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  return (
+    <div className="pageContainer">
+      <HeaderExaminateur />
+      <Container
+        fluid
+        className="contentContainer"
+        style={{
+          backgroundColor: "rgba(142, 202, 230, 0.34)",
+          minHeight: "100vh",
+          padding: "20px 0",
+        }}
+      >
+        {showParticipantList ? (
+          <>
+            <div>
+              <Button
+                variant="warning"
+                size="lg"
+                onClick={() => setShowParticipantList(true)}
+              >
+                Afficher la liste des participants
+              </Button>{" "}
+              {"   "}
+              <Button
+                variant="outline-warning"
+                size="lg"
+                onClick={() => setShowParticipantList(false)}
+              >
+                Ajouter des participants
+              </Button>
+            </div>
+            <div>
+              <ModalComponent
+                modalTitle="Supprimer les participants"
+                buttonTitle="Supprimer tous les participants"
+                buttonStyle="danger mt-5 mr-30"
+                modalBody="êtes-vous sûr(e) de vouloir supprimer tous les participants à l'examen? "
+                closeText="Annuler"
+                confirmText="Confirmer"
+                handleConfirm={deleteParticipants}
+              />
+            </div>
+            <Table striped bordered hover className="table mt-5 ">
+              <thead>
+                <tr>
+                  <th>Id examiné</th>
+                  <th>Nom</th>
+                  <th>Prénom</th>
+                  <th>Groupe</th>
+                  <th> Supprimer </th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.isArray(participants) &&
+                  participants.map((participant) => (
+                    <tr key={participant.id}>
+                      <td>{participant.id}</td>
+                      <td>{participant.nom}</td>
+                      <td>{participant.prenom}</td>
+                      <td>{participant.groupe}</td>
+                      <td>
+                        <Button
+                          variant="outline-danger"
+                          onClick={() => deleteParticipant(participant.id)}
+                        >
+                          Supprimer
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+          </>
+        ) : (
+          <>
+            <Button
+              variant="warning"
+              size="lg"
+              onClick={() => setShowParticipantList(true)}
+            >
+              Afficher la liste des participants
+            </Button>
+            {"   "}
+            <Button
+              variant="outline-warning"
+              size="lg"
+              onClick={() => setShowParticipantList(false)}
+            >
+              Ajouter des participants
+            </Button>
+            <AddParticipant
+              id={id}
+              id_examen={id_examen}
+              ParticipantsList={participants}
+            />
+          </>
+        )}
+      </Container>
+    </div>
+  );
+};
+
+export default ParticipantsList;

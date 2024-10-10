@@ -1,0 +1,139 @@
+const express = require('express')
+const app = express()
+
+const cors = require("cors");
+const port = 5000
+const pool = require("./db");
+
+app.use(cors());
+app.use(express.json()); 
+
+//routes
+
+//get nom+prenom for the bienvenue XXX
+//fonctionne et retourne {nom: , prenom:}
+app.get("/utilisateur/:id", async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const utilisateur = await pool.query(
+            "SELECT nom, prenom FROM utilisateur WHERE id = $1", [id]
+        );
+        res.json(utilisateur.rows[0]); 
+        console.log(res)
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+
+
+//create an exam POST
+//fonctionne
+app.post("/examen/:id_utilisateur", async(req,res) => {
+    try{
+        const {titre} =req.body;
+        const {id_utilisateur} =req.params;
+        const newExam = await pool.query("INSERT INTO examen (titre, id_utilisateur,statut) VALUES($1, $2, 'cree') RETURNING *", [titre,id_utilisateur]);
+        res.json(newExam.rows[0]); 
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+// get tous les examens crées en fonction du statut 
+//fonctionne
+app.get ("/examens/:id_utilisateur/:statut", async(req,res) => {
+    try{
+        const {id_utilisateur,statut}= req.params
+        const allExams = await pool.query("SELECT * FROM examen WHERE (id_utilisateur = $1 AND statut= $2)", [id_utilisateur,statut]);
+        res.json(allExams.rows);
+    }catch (err){
+        console.error(err.message);
+    }
+})
+
+//il y a un problème ici, si on souhaite supprimer un examen  il faut supprimer les questions et réponses associées car contraintes de clés
+// j'ai pas encore traité la table répond 
+//delete an exam DELETE
+// fonctionne pour le moment
+app.delete('/examen/:id/:id_utilisateur', async (req, res) => {
+    const client = await pool.connect();
+    try {
+        const { id, id_utilisateur } = req.params;
+
+        await client.query('BEGIN');
+
+        // Supprime les réponses liées à la question
+        await client.query('DELETE FROM reponses WHERE id_question IN (SELECT id FROM question WHERE id_examen = $1)', [id]);
+
+        // Supprime la question de l'examen
+        await client.query('DELETE FROM question WHERE id_examen = $1', [id]);
+
+        // Supprimer l'examen 
+        await client.query('DELETE FROM examen WHERE id = $1 AND id_utilisateur = $2', [id, id_utilisateur]);
+
+        // Valide la transaction
+        await client.query('COMMIT');
+
+        res.json("Examen supprimé avec succès");
+    } catch (err) {
+        // annuler la transaction pour conserver l'intégrité de la bdd
+        await client.query('ROLLBACK');
+        console.error(err.message);
+    } finally {
+        // Libérer le client de la pool après utilisation
+        client.release();
+    }
+});
+
+
+//get one exam with its id GET
+// fonctionne
+// retourne toutes les infos d'un examen à partir de son id
+app.get("/examen/:id", async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const examen = await pool.query(
+            "SELECT * FROM examen WHERE id = $1", [id]
+        );
+        res.json(examen.rows[0]); 
+        console.log(examen.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+
+//update titre examen
+//fonctionne
+app.put("/Mettre_a_jour_titre_examen/:id", async (req,res) => {
+    try{
+        const {id} = req.params;
+        const {titre} = req.body;
+        const updateExamTitle = await pool.query('UPDATE examen SET titre =$1 WHERE id = $2',
+        [titre, id]);
+        res.json("titre de l'examen mis à jour");
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+//update date début et fin examen 
+//fonctionne
+app.put("/Mettre_a_jour_date_examen/:id", async (req,res) => {
+    try{
+        const {id} = req.params;
+        const {date_debut ,date_fin } = req.body;
+        const updateExamDate = await pool.query('UPDATE examen SET date_debut =$1, date_fin =$2 WHERE id = $3',
+        [date_debut,date_fin,id]);
+        res.json("Dates examens mis à jour");
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+
+
+
+
+app.listen(port, () => console.log('Server running '))

@@ -1,0 +1,41 @@
+import React, {useState} from 'react';
+import {Container } from "react-bootstrap"; 
+import ModalCreateExam from '../components/ModalCreateExam';
+import ExamList from "../components/ExamList"; 
+import HeaderExaminateur from '../components/HeaderExaminateur';
+
+
+const HomeExaminateur = () => {
+  /* ici exams sont statiques mais je vais implémenter une logique pour les puiser de la database*/
+  const exams = [
+    { id: 1, title: 'Examen 1' },
+    { id: 2, title: 'Examen 2' },
+    { id: 3, title: 'Examen 3' },
+  ];
+  const [showModal, setShowModal] = useState(false);
+
+  const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
+  
+  return (
+    <div className="pageContainer">
+       <HeaderExaminateur/>
+      
+      <Container fluid className="contentContainer" style={{ backgroundColor: 'rgba(142, 202, 230, 0.34)', 
+      minHeight: '100vh' , padding: '20px 0' }}>
+
+        
+        <div className="buttonContainer">
+          <ModalCreateExam showModal={showModal} handleClose={handleClose} />
+        </div>
+
+        <ExamList listTitle="Examens créés" examCards={exams}/>
+
+      </Container> 
+
+    </div>
+  );
+}
+
+
+export default HomeExaminateur;

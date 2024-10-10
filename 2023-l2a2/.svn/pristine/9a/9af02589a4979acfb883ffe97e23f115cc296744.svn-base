@@ -1,0 +1,138 @@
+.inscreption{
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+  width: 50%;
+  transform: scale(0.8);
+}
+.login-footer{
+  padding: 10px 16px 10px 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: relative;
+  width: 100%;
+}
+
+.login-content{
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+h1{
+  color: #000000;
+  text-align: center;
+  font-family: "Montserrat-Bold", sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-subtitle{
+  color: #000000;
+  text-align: left;
+  font-family: "Montserrat-Light", sans-serif;
+  font-size: 20px;
+  font-weight: 300;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.login-label{
+  color: #000000;
+  text-align: left;
+  font-family: "Montserrat-Light", sans-serif;
+  font-size: 20px;
+  font-weight: 300;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+
+input{
+  border-radius: 16px;
+  border-style: solid;
+  border-color: #c2c0c0;
+  border-width: 1px;
+  padding: 10px 16px 10px 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  width: 367px;
+}
+
+.login-form{
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.login-link{
+  color: #FB8500;
+  text-align: center;
+  font-family: "Montserrat-Medium", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-link1{
+  color: #219EBC;
+  font-family: "Montserrat-Medium", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+}
+.p{
+  color:black;
+  font-family: "Montserrat-Medium", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.ellipses{
+  width: 50%;
+  height:auto;
+  position: relative;
+  overflow: visible;
+  transform: scale(0.9);
+
+}
+
+.inscreption_ellipses{
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  height: 100vh; 
+  width: 100vw;
+}

@@ -1,0 +1,53 @@
+import React, { useState } from "react";
+
+const AddParticipant = () => {
+  const [IdExamine, setIdExamine] = useState("");
+  /*
+  const onSubmitForm = async (e, id_examen, id_utilisateur) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `http://localhost:3001/examen/${id_examen}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id_examine: id_utilisateur }), // Only include id_examine
+        }
+      );
+      window.location = "/";
+    } catch (err) {
+      console.error(err.message);
+    }
+  };*/
+
+  //ne fonctionne pas
+
+  return (
+    <>
+      <div className="container">
+        <h1 className="text-center mt-5" style={{
+              marginTop: "0",
+              color: "#000000",
+              fontFamily: "Montserrat",
+              fontWeight: "bold",
+            }}>
+          {" "}
+          Ajouter un participant avec son id:
+        </h1>
+        <form className="d-flex mt-5" >
+          <input
+            type="text"
+            className="form-control"
+            value={IdExamine}
+            onChange={(e) => setIdExamine(e.target.value)}
+          />
+          <button type="submit" className="btn btn-info">
+            Ajouter
+          </button>
+        </form>
+      </div>
+    </>
+  );
+};
+
+export default AddParticipant;

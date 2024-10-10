@@ -1,0 +1,109 @@
+import React, { useState, useEffect,useRef } from "react";
+import HeaderExamine from "../components/HeaderExamine";
+import { Container, Button } from "react-bootstrap";
+import Examen from "../components/Examen";
+import "./style/ExamPage.css";
+import { useParams} from "react-router-dom";
+import NavbarProfil from "../components/NavbarProfil";
+
+const ExamPage = () => {
+  const { id,id_examen, duree } = useParams();
+  const [etat , setEtat]= useState(false);
+  const [timer, setTimer] = useState(parseInt(duree) * 60);
+  const intervalRef = useRef(null);
+  const [nom, setNom] = useState('');
+  const [prenom, setPrenom] = useState('');
+
+    //get donnees utilisateur
+    useEffect(() => {
+        const fetchUserData = async () => {
+          try {
+            const response = await fetch(`http://localhost:3001/utilisateur/${id}`);
+            if (!response.ok) {
+              throw new Error('Erreur de réseau ou réponse non valide');
+            }
+            const data = await response.json();
+            setNom(data.nom);
+            setPrenom(data.prenom);
+          } catch (error) {
+            console.error("Erreur lors de la récupération des données de l'utilisateur", error);
+          }
+        };
+        if (id) {
+          fetchUserData();
+        }
+      }, [id]);
+
+      const urlLogo =`/Profile_examine/${id}`;
+
+     const containertable ={
+      width : '100%',
+     };
+
+  useEffect(() => {
+    const countdown = () => {
+      setTimer((prevTimer) => {
+        if (prevTimer > 0) {
+          return prevTimer - 1;
+        } else {
+          clearInterval(intervalRef.current);  
+          soumettre();
+          return 0;
+        }
+      });
+    };
+    intervalRef.current = setInterval(countdown, 1000);  
+    return () => clearInterval(intervalRef.current);  
+  }, []);
+
+  useEffect(() => {
+    const storedTimer = localStorage.getItem('timer examen');
+    if (storedTimer) {
+      setTimer(parseInt(storedTimer));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('timer examen', timer.toString());
+  }, [timer]);
+
+  const formatTime = (seconds) => {
+    const heures = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secondesRestantes = seconds % 60;
+    return `${heures}:${String(minutes).padStart(2, "0")}:${String(secondesRestantes).padStart(2, "0")}`;
+  };
+
+  const soumettre =() => {
+    setEtat(true);
+    
+  }
+
+  
+  return (
+    <div>
+      <NavbarProfil nom={nom} prenom={prenom} homePageURL={urlLogo} />
+
+      <div
+        style={{
+          backgroundColor: "rgba(142, 202, 230, 0.34)",
+          minHeight: "100vh",
+          padding: "20px 0",
+        }}
+      >
+        <div className="sticky_container">
+          <div className="timer">{formatTime(timer)}</div> <br />  
+          <Button variant="danger" onClick ={soumettre}>Finir et soumettre</Button>
+        </div>
+
+        <Container fluid className="contentContainer">
+          <div className="Questions">
+            <Examen id_examen={id_examen} etat = {etat} />
+          </div>
+        </Container>
+      </div>
+    </div>
+  );
+};
+
+export default ExamPage;

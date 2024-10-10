@@ -1,0 +1,14 @@
+import React from 'react'
+import MenuExamine from './MenuExamine'
+import NavbarProfil from './NavbarProfil'
+
+const HeaderExamine = () => {
+  return (
+    <>
+      <NavbarProfil />
+      <MenuExamine/>
+    </>
+  )
+}
+
+export default HeaderExamine

@@ -1,0 +1,44 @@
+import React from 'react';
+import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter,Routes,Route } from 'react-router-dom';
+//import SignupPage from './assests/Pages/SignupPage';
+//import LoginPage from './assests/Pages/LoginPage';
+//import ErrorPage from './assests/Pages/ErrorPage';
+import HomeExaminateur from "./assests/Pages/HomeExaminateur"
+import ExamensEnLigneExaminateur from "./assests/Pages/ExamensEnLigneExaminateur";
+import RésultatsExaminateur from "./assests/Pages/RésultatsExaminateur";
+import ProfilePage from './assests/Pages/ProfilePage';
+import HeaderExaminateur from './assests/components/HeaderExaminateur';
+
+
+
+const App = () => {
+  
+    /*<BrowserRouter>
+      <Routes>
+         <Route path="/" index element={<LoginPage/>} />
+         <Route path="/SignUp" element={<SignupPage/>} />
+         <Route  path="*" element={<ErrorPage/>}/>
+   </Routes>
+   </BrowserRouter>  */
+
+   
+
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomeExaminateur/>} />
+        <Route path="/résultats" element={<RésultatsExaminateur />} />
+        <Route path="/examens-en-ligne" element={<ExamensEnLigneExaminateur />} />
+        <Route path="/ProfilePage" element={<ProfilePage header={<HeaderExaminateur />} />} />
+
+      </Routes>
+    </BrowserRouter>
+  );
+  
+};
+
+
+
+export default App;

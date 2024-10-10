@@ -1,0 +1,27 @@
+.examListContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 50px 20px;
+}
+
+.titleContainer {
+  margin-left: 100px; 
+}
+
+.listTitle {
+  font-size: 30px;
+  font-weight: bold;
+  color: #023047;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.cardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  padding-left: 20px;
+}

@@ -1,0 +1,35 @@
+import React from 'react'
+import ExamCard from './ExamCard'
+import '../Pages/style/ExamList.css';
+
+// prends en argument une liste d'exam cards et le titre de la liste, si on ajoute des examens seule la longueur varie
+
+const ExamList = ({ listTitle, examCards }) => {
+  if (!examCards) {
+    // Si examCards est undefined ou null
+    console.error("examCards is undefined or null");
+    return null;
+  }
+  return (
+    <div className="examListContainer">
+      <div className="titleContainer">
+        <h1 className="listTitle">{listTitle} :</h1>
+      </div>
+
+      <div className="cardsContainer">
+        {examCards.map((exam) => (
+          <ExamCard
+            key={exam.id}
+            examId={exam.id}
+            examName={exam.title}
+            onClick={() => {}} // to be implemented
+            className="card"
+            titleStyle="cardTitle"
+          />
+        ))}
+      </div>
+    </div>
+  );
+  };
+  
+  export default ExamList;

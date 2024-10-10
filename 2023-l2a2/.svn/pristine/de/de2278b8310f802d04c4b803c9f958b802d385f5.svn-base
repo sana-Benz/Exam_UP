@@ -1,0 +1,16 @@
+.card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background : FFFFFF;
+  }
+  
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .card {
+    margin: 10px;
+  }

@@ -1,0 +1,161 @@
+import React, {useState, useEffect} from "react";
+import { Link,useParams } from "react-router-dom";
+import Button from "./button";
+const QuestionsList = () => {
+    const [questions, setQuestions] = useState([]);
+    const [totalBareme, setTotalBareme] = useState(0);
+    const [totalDuration, setTotalDuration] = useState(0);
+    const { id,id_examen }= useParams();
+
+
+    // cnvertir le temps de format hh:mm:ss en secondes
+const convertToSeconds = (time) => {
+    const [hours, minutes, seconds] = time.split(':').map(Number);
+    return hours * 3600 + minutes * 60 + seconds;
+};
+
+// convertir le temps sous fomrat secondes en format hh:mm:ss
+const formatTime = (totalSeconds) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return [hours, minutes, seconds].map(v => v.toString().padStart(2, '0')).join(':');
+};
+
+    //fonction qui cherche en bdd l'id , la durée et le berreme des question d'un examen
+    const getQuestions = async () => {
+        try{
+          console.log(id,id_examen);
+          const response = await fetch(`http://localhost:3001/questions/${id}/${id_examen}`);
+          if (!response.ok) {
+            throw new Error("La réponse du réseau n'était pas ok");
+          }
+          const jsonData = await response.json();
+          console.log(jsonData);
+          setQuestions(jsonData);
+
+         // calcule la somme de bareme et temps
+        const totalDur = jsonData.reduce((acc, curr) => acc + convertToSeconds(curr.duree), 0);
+        const totalBar = jsonData.reduce((acc, curr) => acc + curr.nb_points, 0);
+        setTotalBareme(totalBar);
+        setTotalDuration(formatTime(totalDur));
+        }catch(err){
+          console.error(err.message);
+        }
+    };
+    useEffect(() => {
+        getQuestions();
+    },[id, id_examen]);
+
+    // Fonction pour supprimer une question
+    const deleteQuestion = async (id_question) => {
+    try {
+        const response = await fetch(`http://localhost:3001/questions/delete/${id}/${id_examen}/${id_question}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            throw new Error('Échec de la suppression de la question');
+        }
+        const jsonData = await response.json();
+        console.log('Suppression réussie:', jsonData);
+        setQuestions(questions.filter(q => q.id !== id_question));
+    } catch (err) {
+        console.error('Erreur lors de la suppression:', err);
+    }
+    };
+
+
+    const tableStyle = {
+        width: '100%',
+        textAlign: 'center',
+    };
+
+    const rowStyle = {
+        width: '100%',
+        borderBottom: '2px solid #023047',
+        textAlign: 'center',
+        height: '50px',
+        padding: '10px',
+    };
+    const table ={
+        width: '100%',
+    };
+
+    return(
+        <div style={table}>
+                <div className="container">
+                    <div className="examen_infos">
+                        <p>temps d examen</p>
+                        <p className="p">estimé à {totalDuration}</p>
+                    </div>
+                    <div className="examen_infos">
+                        <p>Barème</p>
+                        <p className="p"> estimé à {totalBareme} points</p>
+                    </div>
+                    <Link to={`/ajouter_question/${id}/${id_examen}`}><Button
+                    text="Ajout question"
+                    fontSize='14px'
+                    color="#023047" // Couleur du bouton 
+                    textColor="#FFFFFF" // Couleur du texte
+                    hoverColor="#FFFFFF" // Couleur du bouton au survol
+                    hoverTextColor="#023047" // Couleur du texte au survol
+                    hoverBorderColor="#023047"
+                    width="140px" />
+                    </Link>
+
+                </div> 
+        <table style={tableStyle}>
+            
+            <thead>
+        <tr style={rowStyle}>
+            <th>Numéro question</th>
+            <th>Durée</th>
+            <th>Barème</th>
+            <th>Modification</th>
+            <th>Suppression</th>                       
+        </tr>
+        </thead>
+
+        <tbody>
+        {questions.map ((q,index) => (
+            <tr key={index} style={rowStyle}>
+            <td>{index +1}</td>
+            <td>{q.duree}</td>
+            <td>{q.nb_points}</td>
+            <td><Link to={`/modifier_question/${id}/${id_examen}/${q.id}`}>
+                <Button
+                 text="Modifier"
+                 fontSize='12px'
+                 color="green" // Couleur du bouton 
+                 textColor="#FFFFFF" // Couleur du texte
+                 hoverColor="#FFFFFF" // Couleur du bouton au survol
+                 hoverTextColor="green" // Couleur du texte au survol
+                 hoverBorderColor="green"
+                 width="90px"                            
+            /></Link>
+            </td>
+
+            <td><Button
+                 text="Supprimer"
+                 fontSize='12px'
+                 color="red" // Couleur du bouton 
+                 textColor="#FFFFFF" // Couleur du texte
+                 hoverColor="#FFFFFF" // Couleur du bouton au survol
+                 hoverTextColor="red" // Couleur du texte au survol
+                 hoverBorderColor="red"
+                 width="90px" 
+                 onClick={() => deleteQuestion(q.id)}                           
+            />
+            </td>                       
+        </tr>
+        ))}
+        </tbody>
+    
+    </table>
+
+    </div>
+
+    );
+};
+
+export default QuestionsList;

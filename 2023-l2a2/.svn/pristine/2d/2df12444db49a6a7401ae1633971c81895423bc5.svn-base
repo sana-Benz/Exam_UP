@@ -1,0 +1,70 @@
+import React, { useState, useEffect,useRef } from "react";
+import OptRepList from "./OptRepList";
+import "../Pages/style/QuestionExamen.css";
+
+const QuestionExamen = ({ id_question , reponsesQuestionCallback}) => {
+  const [questionInfo, setQuestionInfo] = useState({});
+  const [reponsesQuestion, setReponsesQuestion] = useState([]); //contiendra les tuples (id_question, id_option) d'une seule question
+
+  // On crée des tuples (id_question, id_option) à partir de idReponsesReçues
+  const prevReponsesQuestionRef = useRef([]);
+
+  const handleReponses = (idReponses) => {
+    if (Array.isArray(idReponses) && idReponses.length > 0) {
+      const nvReponses = idReponses.map(id_option => [id_question, id_option]);
+      setReponsesQuestion(nvReponses);
+    } else {
+      setReponsesQuestion([]);
+    }
+  };
+
+  useEffect(() => {
+    // Vérifie si la valeur de reponsesQuestion a changé 
+    if (JSON.stringify(reponsesQuestion) !== JSON.stringify(prevReponsesQuestionRef.current)) {
+      reponsesQuestionCallback(reponsesQuestion);
+      prevReponsesQuestionRef.current = reponsesQuestion;
+      console.log('les réponses à la question :', reponsesQuestion);
+    }
+  }, [reponsesQuestion, reponsesQuestionCallback]);
+ 
+
+  //fonction qui va chercher le texte d'une question, son type sa durée et son barème à partir de l'id de la question
+  useEffect(() => {
+    const getQuestion = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3001/question/${id_question}`
+        );
+        const jasonData = await response.json();
+        if (Array.isArray(jasonData) && jasonData.length > 0) {
+          setQuestionInfo(jasonData[0]);
+        } else {
+          console.error("No question data returned from the API");
+        }
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+    getQuestion();
+  }, [id_question]);
+
+  return (
+    <div className="Big_container">
+      <div className="Horizontal_container">
+        <div className="Question_container">
+          Question : {questionInfo.texte}
+        </div>
+        <div className="Points_container">
+          <span> {questionInfo.nb_points} point(s)</span>
+        </div>
+      </div>
+
+
+      <div>
+        <OptRepList id_question={id_question} type_question={questionInfo.type} idReponsesCallback={handleReponses}/>
+      </div>
+    </div>
+  );
+};
+
+export default QuestionExamen;

@@ -1,0 +1,31 @@
+import React from 'react';
+import {Container  } from "react-bootstrap"; 
+
+import ExamList from "../components/ExamList"; 
+import SearchButton from "../components/SearchButton"; 
+import HeaderExaminateur from '../components/HeaderExaminateur';
+
+const ExamensEnLigneExaminateur = () => {
+  /* ici onlineExams sont statiques mais je vais implémenter une logique pour les puiser de la database*/
+  const onlineExams = [
+    { id: 1, title: 'Examen 1' },
+    { id: 2, title: 'Examen 2' },
+    { id: 3, title: 'Examen 3' },
+  ];
+
+  return (
+    <div className="pageContainer">
+       <HeaderExaminateur nom="BEN SLAMA" prenom="Sana" url="/"/>
+      
+      <Container fluid className="contentContainer" style={{ backgroundColor: 'rgba(142, 202, 230, 0.34)', minHeight: '100vh' }}>
+        <div className="buttonContainer">
+          <SearchButton className = "buttonStyle" />
+        </div>
+        <ExamList listTitle="Examens en ligne" examCards={onlineExams}/>
+      </Container>
+
+    </div>
+  );
+}
+
+export default ExamensEnLigneExaminateur

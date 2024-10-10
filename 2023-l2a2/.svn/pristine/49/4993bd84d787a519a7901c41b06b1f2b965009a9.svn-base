@@ -1,0 +1,47 @@
+.examen_infos{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.p{
+    font-family: Montserrat, sans-serif;
+    font-size: 14px;
+    border-radius: 16px;
+    border-style: solid;
+    border-color: #023047;
+    border-width: 2px;
+    padding: 10px 16px 10px 16px;
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    position: relative;
+}
+
+
+
+
+.questions{
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    align-items: center;
+    justify-content: flex-start;
+    width: inherit;
+}

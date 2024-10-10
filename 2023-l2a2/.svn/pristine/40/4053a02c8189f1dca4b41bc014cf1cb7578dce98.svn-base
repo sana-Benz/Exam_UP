@@ -1,0 +1,79 @@
+import React, { PureComponent } from 'react'
+import ExamCard from "./ExamCard";
+
+export class ExamensCorrigés extends PureComponent {
+  render() {
+
+    const exams = [
+      {id: 1,title: 'Examen Théorie des langages'},
+      
+    ];
+    
+      
+    return (
+      <div style={styles.container}>
+        <div style={styles.titleContainer}>
+          <h1 style={styles.title}>Examens corrigés :</h1>
+        </div>
+        <div style={styles.cardsContainer}>
+          {exams.map((exam) => (
+            <ExamCard
+              key={exam.id}
+              exam={exam}
+              onClick={() => {}}
+              cardStyle={styles.card}
+              titleStyle={styles.cardTitle} 
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+}
+
+const styles = {
+  cardsContainer: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    width: '100%',
+    paddingLeft: '20px',
+  },  
+  container: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    padding: '50px 20px', 
+  },
+  heading: {
+    fontSize: '24px',
+    marginBottom: '20px',
+  },
+
+  card: {
+    backgroundColor: 'blue',
+    color: 'white',
+    width: '200px',
+    height: '150px',
+    margin: '10px',
+    padding: '20px',
+    borderRadius: '8px',
+  },
+  
+  title: {
+    fontSize: '40px',
+    fontWeight: 'bold',
+    color: '#023047',
+    marginBottom: '20px',
+    textAlign: 'left',
+  },
+  titleContainer: {
+    marginLeft: '100px', 
+  },
+  
+  
+  }
+
+
+export default ExamensCorrigés

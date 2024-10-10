@@ -1,0 +1,69 @@
+import React from 'react';
+import {Container, Row, Col,  } from "react-bootstrap"; 
+import NavbarProfil from "../components/NavbarProfil";
+import MenuExaminateur from "../components/MenuExaminateur";
+import ListeExamens from '../components/ListeExamens';
+import ExamensTerminés from '../components/ExamensTerminés';
+import AddButton from '../components/AddButton';
+import SearchButton from '../components/SearchButton';
+
+const HomeExaminateur = () => {
+
+      return (
+        <div style={styles.pageContainer}>
+          {/* Container for Navbar et MenuExaminateur */}
+          <div style={styles.headerContainer}>
+            <Container fluid>
+              <Row>
+                <Col>
+                  <NavbarProfil />
+                  <MenuExaminateur />
+                </Col>
+              </Row>
+            </Container>
+          </div>
+          
+          {/* 2eme container for blue background */}
+          <Container fluid style={styles.contentContainer}>
+            <div style={styles.buttonContainer}>
+              <AddButton style={styles.buttonStyle}/>
+              <SearchButton style={styles.buttonStyle} />
+            </div>
+            <ListeExamens />
+            <ExamensTerminés />
+          </Container>
+        </div>
+      );
+}
+
+
+const styles = {
+  pageContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+  },
+  headerContainer: {
+    zIndex: 1, 
+  },
+  contentContainer: {
+    backgroundColor: 'rgba(142, 202, 230, 0.34)',
+    flex: 1,
+    padding: '20px',
+  },
+  buttonStyle : {
+    width: '300px',
+    height: '40px',
+    padding: '2px 24px',
+    margin: '10px',
+    borderRadius: '10px',
+    marginLeft: '10px',
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginBottom: '20px',
+  },
+}; 
+
+export default HomeExaminateur;

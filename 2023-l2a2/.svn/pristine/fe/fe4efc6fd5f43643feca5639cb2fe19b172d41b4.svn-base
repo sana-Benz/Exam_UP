@@ -1,0 +1,94 @@
+import React, {useState, useEffect} from "react";
+import { useParams, Link} from "react-router-dom";
+import Button from "./button";
+
+const QuestionsList = () => {
+    const [questions, setQuestions] = useState([]);
+    const { id,id_examen }= useParams();
+
+    //fonction qui cherche en bdd l'id , la durée et le berreme des question d'un examen
+    const getQuestions = async () => {
+        try{
+          console.log("je suis dans ke try !!");
+          console.log(id,id_examen);
+          const response = await fetch(`http://localhost:3001/questions/${id}/${id_examen}`);
+          if (!response.ok) {
+            throw new Error("La réponse du réseau n'était pas ok");
+          }
+          const jsonData = await response.json();
+          console.log(jsonData);
+          setQuestions(jsonData);
+        }catch(err){
+          console.error(err.message);
+        }
+    };
+    useEffect(() => {
+        getQuestions();
+    },[id, id_examen]);
+
+    const tableStyle = {
+        width: '100%',
+        textAlign: 'center',
+    };
+
+    const rowStyle = {
+        width: '100%',
+        borderBottom: '2px solid #023047',
+        textAlign: 'center',
+        height: '50px',
+        padding: '10px',
+    };
+
+    return(
+        <table style={tableStyle}>
+            
+            <thead>
+        <tr style={rowStyle}>
+            <th>Numéro question</th>
+            <th>Durée</th>
+            <th>Barème</th>
+            <th>Modification</th>
+            <th>Suppression</th>                       
+        </tr>
+        </thead>
+
+        <tbody>
+        {questions.map ((q,id) => (
+            <tr key={id} style={rowStyle}>
+            <td>{id +1}</td>
+            <td>{q.duree}</td>
+            <td>{q.nb_points}</td>
+            <td><Link to={`/modifier_question/${id}/${id_examen}/${q.id}`}>
+                <Button
+                 text="Modifier"
+                 fontSize='12px'
+                 color="green" // Couleur du bouton 
+                 textColor="#FFFFFF" // Couleur du texte
+                 hoverColor="#FFFFFF" // Couleur du bouton au survol
+                 hoverTextColor="green" // Couleur du texte au survol
+                 hoverBorderColor="green"
+                 width="90px"                            
+            /></Link>
+            </td>
+
+            <td><Button
+                 text="Supprimer"
+                 fontSize='12px'
+                 color="red" // Couleur du bouton 
+                 textColor="#FFFFFF" // Couleur du texte
+                 hoverColor="#FFFFFF" // Couleur du bouton au survol
+                 hoverTextColor="red" // Couleur du texte au survol
+                 hoverBorderColor="red"
+                 width="90px"                            
+            />
+            </td>                       
+        </tr>
+        ))}
+        </tbody>
+    
+    </table>
+
+    );
+};
+
+export default QuestionsList;

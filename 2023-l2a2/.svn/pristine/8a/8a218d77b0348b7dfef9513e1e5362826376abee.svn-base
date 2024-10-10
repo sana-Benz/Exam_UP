@@ -1,0 +1,14 @@
+import React from 'react';
+import { Button } from 'react-bootstrap';
+import { FaPlus } from 'react-icons/fa';
+
+const AddButton = ({ onClick, style }) => {
+  return (
+    <Button variant="outline-info" onClick={onClick} style={style}>
+      <FaPlus /> Ajouter un Examen
+    </Button>
+  );
+};
+
+export default AddButton;
+

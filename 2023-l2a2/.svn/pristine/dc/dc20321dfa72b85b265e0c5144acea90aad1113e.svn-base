@@ -1,0 +1,103 @@
+import React, { useState } from "react";
+import NavbarProfil from "../components/NavbarProfil";
+import {Container } from "react-bootstrap"; 
+import Button from "../components/button";
+import "./style/CreationExamen.css";
+import { Link } from "react-router-dom";
+
+
+function CreationExamen({}) {
+    const urlLogo ="/";
+    const nom = "BEN SLAMA"
+    const prenom ="Sana"
+
+    return(
+        <div>
+        <NavbarProfil
+        nom={nom}
+        prenom={prenom}
+        homePageURL={urlLogo}
+        />
+        <Container fluid className="contentContainer" style={{ backgroundColor: 'rgba(142, 202, 230, 0.34)', 
+        minHeight: '100vh' , padding: '20px 0' }}>
+                <div className="container">
+                    <div className="examen_infos">
+                        <p>temps d examen</p>
+                        <p className="p">estimé à 00:11:00</p>
+                    </div>
+                    <div className="examen_infos">
+                        <p>Barème</p>
+                        <p className="p"> estimé à 10 points</p>
+                    </div>
+                    <Link to=""><Button
+                    text="Ajout question"
+                    fontSize='14px'
+                    color="#023047" // Couleur du bouton 
+                    textColor="#FFFFFF" // Couleur du texte
+                    hoverColor="#FFFFFF" // Couleur du bouton au survol
+                    hoverTextColor="#023047" // Couleur du texte au survol
+                    hoverBorderColor="#023047"
+                    width="140px" />
+                    </Link>
+
+                </div>            
+            <div className="questions">
+                <div className="questions">
+                    <table>
+                        <tr>
+                            <th>Numéro question</th>
+                            <th>Durée</th>
+                            <th>Barème</th>
+                            <th>Modefication</th>
+                            <th>Supression</th>                       
+                        </tr>
+                        <tr>
+                            <td>Numéro question</td>
+                            <td>Durée</td>
+                            <td>Barème</td>
+                            <td><Button
+                                 text="Modifier"
+                                 fontSize='12px'
+                                 color="green" // Couleur du bouton 
+                                 textColor="#FFFFFF" // Couleur du texte
+                                 hoverColor="#FFFFFF" // Couleur du bouton au survol
+                                 hoverTextColor="green" // Couleur du texte au survol
+                                 hoverBorderColor="green"
+                                 width="90px"                            
+                            />
+                            </td>
+
+                            <td><Button
+                                 text="Supprimer"
+                                 fontSize='12px'
+                                 color="red" // Couleur du bouton 
+                                 textColor="#FFFFFF" // Couleur du texte
+                                 hoverColor="#FFFFFF" // Couleur du bouton au survol
+                                 hoverTextColor="red" // Couleur du texte au survol
+                                 hoverBorderColor="red"
+                                 width="90px"                            
+                            />
+                            </td>                       
+                        </tr>
+                    </table>
+                        <Button
+                         text="Sauvgarder"
+                         fontSize='14px'
+                         color="#023047" // Couleur du bouton 
+                         textColor="#FFFFFF" // Couleur du texte
+                         hoverColor="#FFFFFF" // Couleur du bouton au survol
+                         hoverTextColor="#023047" // Couleur du texte au survol
+                         hoverBorderColor="#023047"
+                         width="160px" />
+                </div>
+            </div>
+
+       </Container> 
+
+       </div>
+
+    );
+
+}
+
+export default CreationExamen;

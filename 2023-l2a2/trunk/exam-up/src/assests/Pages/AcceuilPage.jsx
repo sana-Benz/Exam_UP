@@ -1,0 +1,97 @@
+import React from 'react';
+import Navbar from '../components/Navbar';
+import Button from '../components/button.jsx';
+import des_ellipses from "../images/des_ellipses.svg";
+import Fonctionalites from '../components/Fonctionalites';
+import CommentMarche from '../components/CommentMarche';
+import { Link } from 'react-router-dom';
+
+function AcceuilPage(){
+    const textStyle = {
+        fontFamily: 'Montserrat, sans-serif',
+        margin: '0 0 20px',
+      };
+
+      const ellipseContainerStyle = {
+        position: 'absolute',
+        top: '-220px', 
+        right: '-196px', 
+        zIndex: '2',
+        transform: 'scale(0.5)'
+      };
+
+      const sectionHaut = {
+        height: '380px',
+        position: 'relative',
+        overflow: 'visible',
+        backgroundColor: '#E9F5F8',
+      };
+
+      const alignmentTextButton = {
+        display: 'flex',
+        flexDirection: 'column', 
+        alignItems: 'flex-start',
+        padding: '35px 40px'
+
+      };
+
+    
+
+    return(
+        <div>
+        
+        <Navbar/>
+
+        <div style={sectionHaut}>
+
+          <div style={ellipseContainerStyle}>
+            <img src={des_ellipses} alt="Ellipses" />
+          </div>
+
+          <div style={alignmentTextButton}>
+
+          <div style={textStyle}>
+          <h1>Bienvenue sur ExamUP !</h1>
+          <p><strong>ExamUp </strong>est votre atelier pour des questionnaires <br/> personnalisés, parfaits pour le travail et l'éducation.</p>
+          </div>
+          <div>
+
+        <Link to="/SignUp">
+
+          <Button
+         text="Créer un compte"
+         fontSize='16px'
+         color="#023047" // Couleur du bouton 
+         textColor="#FFFFFF" // Couleur du texte
+         hoverColor="#FFFFFF" // Couleur du bouton au survol
+         hoverTextColor="#023047" // Couleur du texte au survol
+         hoverBorderColor="#023047"
+         width="180px" />
+
+        </Link>
+
+        <Button
+         text="En savoir plus"
+         fontSize='16px'
+         color="white" // Couleur du bouton
+         textColor="#023047" // Couleur du texte
+         hoverColor="#FFB703" // Couleur du bouton au survol
+         hoverTextColor="#FFFFFF" // Couleur du texte au survol
+         hoverBorderColor="#FFB703"
+         width="180px" />
+
+          </div>
+
+          </div>
+
+          </div>
+
+          <Fonctionalites/>
+          <CommentMarche/>
+
+        </div>
+    );
+
+}
+
+export default AcceuilPage;

@@ -1,0 +1,47 @@
+import React, { useState, useEffect } from "react";
+import OptRepList from "./OptRepList";
+import "../Pages/style/QuestionExamen.css";
+
+const QuestionExamen = ({ id_question }) => {
+  const [questionInfo, setQuestionInfo] = useState({});
+
+  //fonction qui va chercher le texte d'une question, son type sa durée et son barème à partir de l'id de la question
+  useEffect(() => {
+    const getQuestion = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/question/${id_question}`
+        );
+        const jasonData = await response.json();
+        if (Array.isArray(jasonData) && jasonData.length > 0) {
+          setQuestionInfo(jasonData[0]);
+        } else {
+          console.error("No question data returned from the API");
+        }
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+    getQuestion();
+  }, [id_question]);
+
+  return (
+    <div className="Big_container">
+      <div className="Horizontal_container">
+        <div className="Question_container">
+          Question : {questionInfo.texte}
+        </div>
+        <div className="Points_container">
+          <span> {questionInfo.nb_points} point(s)</span>
+        </div>
+      </div>
+
+
+      <div>
+        <OptRepList id_question={id_question} type_question={questionInfo.type}/>
+      </div>
+    </div>
+  );
+};
+
+export default QuestionExamen;

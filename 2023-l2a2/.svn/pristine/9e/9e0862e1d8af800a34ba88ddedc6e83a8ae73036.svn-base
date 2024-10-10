@@ -1,0 +1,123 @@
+import React, { useEffect, useState } from "react";
+import NavbarProfil from "../components/NavbarProfil";
+import {Container } from "react-bootstrap"; 
+import Button from "../components/button";
+import "./style/CreationExamen.css";
+import { Link, useParams } from "react-router-dom";
+import QuestionsList from "../components/QuestionsList";
+
+
+function CreationQuestion({}) {
+    const [nom, setNom] = useState('');
+    const [prenom, setPrenom] = useState('');
+<<<<<<< .mine
+    const { id,id_examen,statut}= useParams(); 
+||||||| .r141
+    const { id }= useParams(); 
+=======
+    const { id, id_examen }= useParams(); 
+>>>>>>> .r151
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+          try {
+            const response = await fetch(`http://localhost:3001/utilisateur/${id}`);
+            if (!response.ok) {
+              throw new Error('Erreur de réseau ou réponse non valide');
+            }
+            const data = await response.json();
+            setNom(data.nom);
+            setPrenom(data.prenom);
+          } catch (error) {
+            console.error("Erreur lors de la récupération des données de l'utilisateur", error);
+          }
+        };
+    
+        if (id) {
+          fetchUserData();
+        }
+      }, [id]);
+
+      const urlLogo =`/profile-examinateur/${id}`;
+
+     const containertable ={
+      width : '100%',
+     };
+
+    return(
+        <div>
+        <NavbarProfil nom={nom} prenom={prenom} homePageURL={urlLogo} />
+        <Container fluid className="contentContainer" style={{ backgroundColor: 'rgba(142, 202, 230, 0.34)', 
+        minHeight: '100vh' , padding: '20px 0' }}>
+<<<<<<< .mine
+||||||| .r141
+                <div className="container">
+                    <div className="examen_infos">
+                        <p>temps d examen</p>
+                        <p className="p">estimé à 00:11:00</p>
+                    </div>
+                    <div className="examen_infos">
+                        <p>Barème</p>
+                        <p className="p"> estimé à 10 points</p>
+                    </div>
+                    <Link to=""><Button
+                    text="Ajout question"
+                    fontSize='14px'
+                    color="#023047" // Couleur du bouton 
+                    textColor="#FFFFFF" // Couleur du texte
+                    hoverColor="#FFFFFF" // Couleur du bouton au survol
+                    hoverTextColor="#023047" // Couleur du texte au survol
+                    hoverBorderColor="#023047"
+                    width="140px" />
+                    </Link>
+=======
+                <div className="container">
+                    <div className="examen_infos">
+                        <p>temps d examen</p>
+                        <p className="p">estimé à 00:11:00</p>
+                    </div>
+                    <div className="examen_infos">
+                        <p>Barème</p>
+                        <p className="p"> estimé à 10 points</p>
+                    </div>
+                    <>
+                    <Link to={`/ajouter_question/${id}/${id_examen}`}>    <Button
+                    text="Ajout question"
+                    fontSize='14px'
+                    color="#023047" // Couleur du bouton 
+                    textColor="#FFFFFF" // Couleur du texte
+                    hoverColor="#FFFFFF" // Couleur du bouton au survol
+                    hoverTextColor="#023047" // Couleur du texte au survol
+                    hoverBorderColor="#023047"
+                    width="140px" />
+                    </Link>
+>>>>>>> .r151
+                    </>
+                <div className="questions" style={containertable}>
+                    {/* liste des questions*/}
+                    <QuestionsList/>
+                        
+                        <Link to={`/Détails-examen/${id}/${id_examen}/${statut}`}>
+                        <Button
+                         text="Sauvgarder"
+                         fontSize='14px'
+                         color="#023047" // Couleur du bouton 
+                         textColor="#FFFFFF" // Couleur du texte
+                         hoverColor="#FFFFFF" // Couleur du bouton au survol
+                         hoverTextColor="#023047" // Couleur du texte au survol
+                         hoverBorderColor="#023047"
+                         width="160px" />
+                         </Link>
+
+                </div>
+
+
+       </Container> 
+
+       </div>
+
+    );
+
+}
+
+export default CreationQuestion;

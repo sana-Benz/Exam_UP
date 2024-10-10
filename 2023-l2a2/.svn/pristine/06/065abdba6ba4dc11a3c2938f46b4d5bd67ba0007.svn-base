@@ -1,0 +1,32 @@
+import React from "react";
+import HeaderExamine from "../components/HeaderExamine";
+import { Container } from "react-bootstrap";
+import Examen from "../components/Examen";
+import "./style/ExamPage.css";
+
+const ExamPage = () => {
+    return (
+        <div>
+          <HeaderExamine />
+
+          <div style={{
+          backgroundColor: "rgba(142, 202, 230, 0.34)",
+          minHeight: "100vh",
+          padding: "20px 0",
+        }}>
+          <div className="sticky_container">
+            <div className="timer">timer</div>
+            <div className="boutton">boutton soumettre</div>
+          </div>
+    
+          <Container fluid className="contentContainer">
+            <div className="Questions">
+              <Examen id_examen={27} />
+            </div>
+          </Container>
+        </div>
+        </div>
+        
+)};
+
+export default ExamPage;

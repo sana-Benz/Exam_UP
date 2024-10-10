@@ -1,0 +1,399 @@
+const express = require("express");
+const app = express();
+const cors = require("cors");
+const jwtAuth = require("./jwtAuth");
+const pool = require("./db");
+const port = process.env.PORT;
+
+require("dotenv").config();
+
+app.use(express.json());
+
+app.use(cors());
+
+app.use("/auth", jwtAuth);
+
+
+
+//routes
+//1
+//get nom+prenom for the bienvenue XXX
+//fonctionne et retourne {nom: , prenom:}
+app.get("/utilisateur/:id", async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const utilisateur = await pool.query(
+            "SELECT nom, prenom FROM utilisateur WHERE id = $1", [id]
+        );
+        res.json(utilisateur.rows[0]); 
+        console.log(res)
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+
+//2
+//create an exam POST
+//fonctionne
+app.post("/examen/:id", async(req,res) => {
+    try{
+        const {titre} =req.body;
+        const {id} =req.params;
+        const newExam = await pool.query("INSERT INTO examen (titre, id_utilisateur,statut) VALUES($1, $2, 'cree') RETURNING *", [titre,id]);
+        res.json(newExam.rows[0]); 
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+//3
+// get tous les examens crées en fonction du statut 
+//fonctionne
+app.get ("/examens/:id/:statut", async(req,res) => {
+    try{
+        const {id,statut}= req.params
+        const allExams = await pool.query("SELECT * FROM examen WHERE (id_utilisateur = $1 AND statut= $2)", [id,statut]);
+        res.json(allExams.rows);
+    }catch (err){
+        console.error(err.message);
+    }
+})
+
+//4
+//il y a un problème ici, si on souhaite supprimer un examen  il faut supprimer les questions et réponses associées car contraintes de clés
+// j'ai pas encore traité la table répond, invitation
+//delete an exam DELETE
+// fonctionne pour le moment
+app.delete('/examen/:id/:id_examen', async (req, res) => {
+    const client = await pool.connect();
+    try {
+        const { id ,id_examen } = req.params;
+
+        await client.query('BEGIN');
+
+        // Supprime les réponses liées à la question
+        await client.query('DELETE FROM reponses WHERE id_question IN (SELECT id FROM question WHERE id_examen = $1)', [id_examen]);
+
+        // Supprime la question de l'examen
+        await client.query('DELETE FROM question WHERE id_examen = $1', [id_examen]);
+
+        // Supprimer l'examen 
+        await client.query('DELETE FROM examen WHERE id = $1 AND id_utilisateur = $2',[ id_examen, id]);
+
+        // Valide la transaction
+        await client.query('COMMIT');
+
+        res.json("Examen supprimé avec succès");
+    } catch (err) {
+        // annuler la transaction pour conserver l'intégrité de la bdd
+        await client.query('ROLLBACK');
+        console.error(err.message);
+    } finally {
+        // Libérer le client de la pool après utilisation
+        client.release();
+    }
+});
+
+//5
+//get one exam with its id GET
+// fonctionne
+// retourne toutes les infos d'un examen à partir de son id
+app.get("/examen/:id/:id_examen", async (req, res) => {
+    try {
+        const { id_examen } = req.params; 
+        const examen = await pool.query(
+            "SELECT * FROM examen WHERE id = $1", [id_examen]
+        );
+        res.json(examen.rows[0]); 
+        console.log(examen.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+    }
+});
+
+//6
+//update titre examen
+//fonctionne
+app.put("/Mettre_a_jour_titre_examen/:id_examen", async (req,res) => {
+    try{
+        const {id_examen} = req.params;
+        const {titre} = req.body;
+        const updateExamTitle = await pool.query('UPDATE examen SET titre =$1 WHERE id = $2',
+        [titre, id_examen]);
+        res.json("titre de l'examen mis à jour");
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+//7
+//update date début et fin examen 
+//fonctionne
+app.put("/Mettre_a_jour_date_examen/:id_examen", async (req,res) => {
+    try{
+        const {id_examen} = req.params;
+        const {date_debut ,date_fin } = req.body;
+        const updateExamDate = await pool.query('UPDATE examen SET date_debut =$1, date_fin =$2 WHERE id = $3',
+        [date_debut,date_fin,id_examen]);
+        res.json("Dates examens mis à jour");
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+
+//***Participants table (invitation)  
+
+//8
+// post nouveau examine à la liste de participants à l'examen
+//fonctionne
+app.post("/participants/:id/:id_examen", async(req,res) => {
+    try{
+        const {id,id_examen} =req.params;
+        const {id_examine} =req.body;
+
+        //vérifier que l'id saisis par l'examinateur est bien un entier
+        const examineId = parseInt(id_examine);
+        if (isNaN(examineId)) { 
+            return res.status(400).json({ error: 'Id invalide' });
+        }
+        //
+
+        // vérifier que l'examine est bien présent dans la bdd et que son role est examiné
+        const user = await pool.query("SELECT * FROM utilisateur WHERE id = $1 AND role = 'examine'", [examineId]);
+        console.log(user.rows[0]);
+        if (user.rows.length === 0) {
+            return res.status(400).json({ error: 'Utilisateur inexistant ou l utilisateur n est pas un examiné' });
+        }
+        //
+
+        const newParticipant = await pool.query("INSERT INTO invitation (id_examen, id_examine) VALUES($1, $2) RETURNING *", [id_examen,examineId]);
+        res.json(newParticipant.rows[0]); 
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+//9
+// delete un examine de la liste des examinés avec son id
+//fonctionne
+app.delete("/participants/:id/:id_examine", async(req,res) => {
+    try{
+        const {id_examine} = req.params;
+        const deleteExamine = await pool.query('DELETE FROM invitation WHERE id_examine = $1', [id_examine]);
+        res.json("participant supprimé");
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+
+
+//10
+// get la liste des participants (id, nom, prenom) de l'examen
+//fonctionne
+app.get("/participants/:id/:id_examen", async (req, res) => {
+    try {
+      const { id_examen } = req.params;
+      const participantInfo = await pool.query(
+        "SELECT id, nom, prenom FROM utilisateur WHERE id IN (SELECT id_examine FROM invitation WHERE id_examen = $1)",
+        [id_examen]
+      );
+      res.json(participantInfo.rows);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+
+
+//****Mettre et retirer un examen d'en ligne 
+
+
+//12
+//update le statut d'un examen de créé --> en_ligne (mettre en ligne)
+app.put("/Mettre_en_ligne_examen/:id/:id_examen", async (req,res) => {
+    try{
+    const {id, id_examen} = req.params;
+    const Mettre_en_ligne = await pool.query("UPDATE examen SET statut='en_ligne' WHERE id = $1",
+        [id_examen]);
+        res.json("Examen mis en ligne !");
+
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+
+//12
+//update statut examen en_ligne-->créé (retirer d'en ligne)
+//fonctionne
+app.put("/Retirer_examen/:id/:id_examen", async (req,res) => {
+    try{
+    const {id, id_examen} = req.params;
+    const Retirer_examen = await pool.query("UPDATE examen SET statut='cree' WHERE id = $1",
+        [id_examen]);
+        res.json("Examen retiré");
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+
+//14
+//requête pour calculer le temps d'une épreuve à partir de l'id de l'examen
+//fonctionne
+app.get("/duree_examen/:id/:id_examen", async(req,res) => {
+    try{
+        const { id,id_examen } = req.params;
+        const duree = await pool.query( "SELECT SUM(duree) AS total_duration FROM question WHERE id_examen = $1",[id_examen]);
+        res.json(duree.rows[0]);
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+
+//questions ****
+
+
+//15
+//get la liste des ids des questions d'un examen à partir de l'id de l'examen
+//fonctionne
+app.get("/questions_examen/:id_examen", async(req,res) => {
+    try{
+        const {id_examen}= req.params;
+        console.log(id_examen);
+        const QuestionList = await pool.query("SELECT id FROM question WHERE id_examen = $1", [id_examen]);
+        res.json(QuestionList.rows);
+    }catch (err){
+        console.error(err.message);
+    }
+})
+
+
+//16
+//get le texte d'une question, son type sa durée et son barème à partir de son id
+//fonctionne
+app.get ("/question/:id_question", async(req,res) => {
+    try{
+        const {id_question}= req.params;
+        console.log(id_question);
+        const question = await pool.query("SELECT nb_points,type, duree, texte FROM question WHERE id = $1", [id_question]);
+        res.json(question.rows);
+    }catch (err){
+        console.error(err.message);
+    }
+})
+
+
+//17
+//get les réponses d'une question à partir de son id
+//fonctionne
+app.get ("/reponses_possibles/:id_question", async(req,res) => {
+    try{
+        const {id_question}= req.params;
+        console.log(id_question);
+        const allOptRep = await pool.query("SELECT id, texte, vf FROM reponses WHERE id_question = $1", [id_question]);
+        res.json(allOptRep.rows);
+    }catch (err){
+        console.error(err.message);
+    }
+})
+
+
+//18
+//get des examens que l'examine a ete invité pour les passer à partir de son id (=id_utilisateur)
+//fonctionne
+app.get ("/Invitations_examens/:id", async(req,res) => {
+    try{
+        const {id}= req.params;
+        console.log(id);
+        const InvitExam = await pool.query('SELECT e.* FROM examen e INNER JOIN invitation i ON e.id = i.id_examen WHERE e.statut = $1 AND i.id_examine = $2',
+        ['en_ligne', id]);
+        res.json(InvitExam.rows);
+    }catch (err){
+        console.error(err.message);
+    }
+})
+
+
+
+//19
+//** création et modification de questions
+//get la liste des question d'un examen
+app.get ("/questions/:id/:id_examen", async(req,res) => {
+    try{
+        const {id_examen}=req.params;
+        console.log(id_examen);
+        const ListeQuestion = await pool.query('SELECT id,nb_points,duree FROM question WHERE id_examen = $1',[id_examen])
+        res.json(ListeQuestion.rows);
+        console.log(ListeQuestion.rows);
+    }catch (err){
+        console.error(err.message);
+    }
+})
+
+
+//20
+//delete un question
+app.delete('/questions/delete/:id/:id_examen/:id_question', async (req, res) => {
+    const { id_question } = req.params;
+    console.log(id_question);
+    try {
+        const deleteQuery = 'DELETE FROM question WHERE id = $1';
+        const result = await pool.query(deleteQuery, [id_question]);
+        if (result.rowCount === 0) {
+            return res.status(404).send({ message: 'Question non trouvée ou déjà supprimée' });
+        }
+        console.log('Question supprimée avec succès');
+        res.send({ message: 'Question supprimée avec succès' });
+    } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+        res.status(500).send({ message: 'Erreur lors de la suppression de la question' });
+    }
+});
+
+
+//put request to update toutes les informations d'une question
+//fonctionne
+app.put("/Mettre_a_jour_infos_question/:id_question", async (req,res) => {
+    try{
+        const {id_question} = req.params;
+        const {titre_q,duree_q,bareme_q,type_q} = req.body;
+        const updateQuestionInfo = await pool.query('UPDATE question SET texte =$1, duree =$2, nb_points =$3, type =$4 WHERE id = $5',
+        [titre_q,duree_q,bareme_q,type_q,id_question]);
+        res.json("Infos questions mis à jour !!");
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+
+//post request pour créer une nouvelle question avec les informations précisées
+//fonctionne
+// ici je récupère l'id et le type de la question qui vient d'être créé
+app.post("/Ajouter_infos_question/:id_examen", async(req,res) => {
+    try{
+        const {id_examen} =req.params;
+        const {titre_q,duree_q,bareme_q,type_q} = req.body;
+        const newExam = await pool.query("INSERT INTO question (texte, duree, nb_points, type, id_examen) VALUES($1, $2, $3, $4, $5) RETURNING *", 
+        [titre_q,duree_q,bareme_q,type_q,id_examen]);
+        console.log("Question ajoutée avec succés !");
+        const { id_question, type } = newExam.rows[0];
+        res.json({ id_question, type });
+    }catch(err){
+        console.error(err.message);
+    }
+})
+
+
+
+app.listen(port, () => {
+  console.log("Le serveur est operationnel au port { " + port + " }");
+});
+
+
+

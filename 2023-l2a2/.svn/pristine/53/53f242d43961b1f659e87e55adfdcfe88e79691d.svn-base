@@ -1,0 +1,80 @@
+import React, {useState} from 'react';
+import ModalComponent from './ModalComponent';
+import Form from 'react-bootstrap/Form';
+
+
+const ModalCreateExam = ({ showModal, handleClose }) => {
+  const [title, setTitle] = useState('');
+  const [dateDebut, setDateDebut] = useState('');
+  const [dateFin, setDateFin] = useState('');
+  const [duree, setDuree] = useState('');
+
+  // que se passe quand on clique sur sauvegarder
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // à compléter avec la logique de soumission ici
+    console.log('Form submitted:', { title, dateDebut, dateFin, duree });
+    // Close modal after form submission
+    handleClose();
+  };
+
+  return (
+    <ModalComponent
+      buttonTitle="+ créer un nouvel examen"
+      buttonStyle ="outline-info"
+      buttonSize ="lg"
+      modalTitle="Création d'examen"
+      modalBody={
+        
+        <Form> {/* champs titre d'examen */}
+          <Form.Group controlId="formTitle">
+            <Form.Label>Titre:</Form.Label>
+            <Form.Control type="text" placeholder="Examen xxx" 
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required/>
+          </Form.Group>
+
+          <Form.Group controlId="dateDebut"> {/* champs date-début */}
+            <Form.Label>Date et heure de début:</Form.Label>
+            <Form.Control
+              type="datetime-local"
+              value={dateDebut}
+              onChange={(e) => setDateDebut(e.target.value)}
+              required
+            />
+          </Form.Group>
+
+
+          <Form.Group controlId="dateFin"> {/* champs date-fin */}
+            <Form.Label>Date et heure de fin:</Form.Label>
+            <Form.Control
+              type="datetime-local"
+              value={dateFin}
+              onChange={(e) => setDateFin(e.target.value)}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group controlId="duree"> {/* champs durée */}
+            <Form.Label>Durée de l'examen: (Heures:Minutes):</Form.Label>
+            <Form.Control
+              type="time"
+              value={duree}
+              onChange={(e) => setDuree(e.target.value)}
+              required
+            />
+          </Form.Group>
+
+        
+
+
+        </Form>
+      }
+      closeText="Annuler"
+      confirmText="Sauvegarder"
+    />
+  );
+}
+
+export default ModalCreateExam

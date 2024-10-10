@@ -1,0 +1,128 @@
+import React, { useState, useEffect } from "react";
+import HeaderExamine from "../components/HeaderExamine";
+import { Container } from "react-bootstrap";
+import "./style/Instructions.css";
+import Button from "../components/button";
+import { Link, useParams } from "react-router-dom";
+
+const Instructions = () => {
+  const { id, id_examen } = useParams();
+  const [examInfos, setExamInfos] = useState(null);
+  const [duree_tot, setDuree_tot] = useState({ minutes: null }); 
+
+  useEffect(() => {
+    getinfos(); // getinfos est appelé quand la page est chargée
+    getDuree();
+  }, []);
+  
+ 
+
+  //cherche les infos sur l'examen
+  const getinfos = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/examen/${id_examen}`);
+      const jasonData = await response.json();
+      setExamInfos(jasonData);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  //cherche le temps total de l'examen
+  const getDuree = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/duree_examen/${id}/${id_examen}`);
+      if (!response.ok) {
+        console.log("erreur de chargement de durée");
+        return; 
+      }
+      const jasonData = await response.json();
+      setDuree_tot(jasonData.duree_tot); 
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+ 
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+  };
+
+  if (!examInfos || !duree_tot || !duree_tot.minutes) {
+    return <div>Chargement de la page...</div>;
+  }
+  
+  return (
+    <div>
+      <HeaderExamine />
+
+      <Container
+        fluid
+        className="contentContainer"
+        style={{
+          backgroundColor: "rgba(142, 202, 230, 0.34)",
+          minHeight: "100vh",
+          padding: "20px 0",
+        }}
+      >
+        <div className="instructions-container">
+          <div className="header">
+            <span>{examInfos.titre}</span>
+          </div>
+          <div className="content">
+            <div className="date">
+            Ouvert le {formatDate(examInfos.date_debut)} <br />
+            Ferme le {formatDate(examInfos.date_fin)}
+            </div>
+            <div className="tentative">
+              Tentatives autorisées : 1 <br />
+              Temps disponible : {duree_tot.minutes} minutes
+            </div>
+            <div className="instructions">
+              <h1>Consignes d'examen :</h1>
+              <p>Veuillez répondre à toutes les questions.</p>
+              <p>
+                Vous ne pouvez sélectionner qu'une seule réponse aux questions à
+                choix unique, et plusieurs réponses aux questions à choix
+                multiple.
+              </p>
+              <p>
+                Assurez-vous d'examiner attentivement vos réponses avant de
+                soumettre le test.
+              </p>
+              <p>
+                Après avoir terminé l'examen, appuyez sur le bouton "Soumettre"
+                pour enregistrer vos réponses. Vous ne pourrez pas modifier vos
+                réponses après la soumission de l'examen.
+              </p>
+              <p>
+                Si le temps autorisé s'est écoulé, l'examen est soumis
+                automatiquement.
+              </p>
+              <p>
+                Toutes les réponses doivent être personnelles. Toute forme de
+                tricherie sera sévèrement sanctionnée.
+              </p>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "30vh",
+                }}
+              >
+                <Button text={"Démarrer une tentative"} color={"#FB8500"} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </div>
+  );
+};
+
+export default Instructions;

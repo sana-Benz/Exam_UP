@@ -1,0 +1,43 @@
+import React, { PureComponent } from 'react'
+import Card from 'react-bootstrap/Card';
+import '../style/ExamCard.css';
+import { FaTrashAlt } from 'react-icons/fa';
+//import DeleteModal from '../DeleteModal';
+
+class ExamCard extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showModal: false
+    };
+  }
+  
+  handleTrashClick = (e) => {
+    e.stopPropagation();
+    this.setState({ showModal: true });
+  };
+
+  handleCloseModal = () => {
+    this.setState({ showModal: false });
+  };
+
+  render() {
+    const { exam, onClick } = this.props;
+    //const { showModal } = this.state;
+
+    return (
+      <Card border="secondary" className="ExamCard" onClick={() => onClick(exam.id)}>
+        <Card.Body>
+          <Card.Title className="title">{exam.title}</Card.Title>
+          <FaTrashAlt className="trash-icon"/>
+
+          {/* <FaTrashAlt className="trash-icon" onClick={this.handleTrashClick} />
+          {showModal && <DeleteModal handleClose={this.handleCloseModal} />}  A REVOIR*/}
+        </Card.Body>
+      </Card>
+    );
+  }
+}
+
+export default ExamCard;
+

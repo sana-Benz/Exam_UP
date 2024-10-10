@@ -1,0 +1,35 @@
+import React, { PureComponent } from 'react'
+import "bootstrap/dist/css/bootstrap.min.css";
+import Container from "react-bootstrap/Container";                    
+import Navbar from "react-bootstrap/Navbar";  
+
+
+export class NavbarProfil extends PureComponent {
+  render() {
+    return (
+      <Navbar className="bg-body-tertiary" >
+      <Container>  
+        <Navbar.Brand href="#home">
+            <img
+              src="../assets/Logo_Nom_de_site.svg"
+              width="200"
+              height="50"
+              className="d-inline-block align-top"
+              alt="React Bootstrap logo"
+            />
+          </Navbar.Brand>
+        <Navbar.Toggle />
+        <Navbar.Collapse className="justify-content-end">
+          <Navbar.Text>
+            Bienvenue <a href="#login" >Jean Dupont</a>
+          </Navbar.Text>
+        </Navbar.Collapse>
+
+      </Container>
+    </Navbar>
+    )
+  }
+}
+
+
+export default NavbarProfil

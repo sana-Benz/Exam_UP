@@ -1,0 +1,9 @@
+.buttonContainer {
+    display: flex;
+    justify-content: flex-end; /* Aligner à droite */
+    margin-bottom: 20px;
+  }
+  
+  .buttonContainer > .buttonStyle {
+    margin-right: 10px; 
+  }

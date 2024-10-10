@@ -1,0 +1,14 @@
+import React from 'react';
+import  Button  from 'react-bootstrap/Button';
+import { FaSearch } from 'react-icons/fa'; 
+
+
+const SearchButton = ({ onClick, style }) => {
+  return (
+    <Button variant="outline-secondary" onClick={onClick} style={style}>
+      <FaSearch /> Rechercher
+    </Button>
+  );
+};
+
+export default SearchButton;

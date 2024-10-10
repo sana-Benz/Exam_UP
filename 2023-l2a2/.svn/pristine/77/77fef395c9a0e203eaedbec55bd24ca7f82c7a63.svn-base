@@ -1,0 +1,64 @@
+import React, {  useEffect,useState } from "react";
+import "../Pages/style/ReponseCreation.css";
+import { Form, Table, Button } from "react-bootstrap";
+
+const ReponseCrea = ({id_question,type_question}) => {
+  //va prendre en prop l'id de la question et le type qcm ou qcu
+  const [description, setDescription] = useState("");
+
+  const onSubmitForm = async (e) => {
+    e.preventDefault();
+    //try catch pour post la nouvelle opt de rép
+  };
+  return (
+    <>
+      <div className="big_container">
+          <div className="form_container">
+            <h1> Intitulé de la réponse</h1>
+            <form className="d-flex mt-5" onSubmit={onSubmitForm}>
+              <input
+                type="text"
+                className="form-control"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <button type="submit" className="btn btn-primary">
+                ajouter
+              </button>
+            </form>
+          </div>
+
+          <div className="table_container">
+            <Table bordered hover className="custom-table">
+              <thead>
+                <tr>
+                <th>Valeur</th>
+                  <th>Description</th>
+                  <th>Supprimer</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                <td>radio</td>
+                  <td>description 1</td>
+                  
+                  <td>
+                    <button className="btn btn-danger"> supprimer</button>
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Button variant="dark" size="lg">
+              {" "}
+              Enregistrer et quitter{" "}
+            </Button>
+          </div>
+        </div>
+    </>
+  );
+};
+
+export default ReponseCrea;

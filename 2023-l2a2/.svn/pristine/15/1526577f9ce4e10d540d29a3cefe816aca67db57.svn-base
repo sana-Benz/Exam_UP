@@ -1,0 +1,150 @@
+.connexion{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+    width: 50%;
+    transform: scale(0.73);
+  }
+
+  .ellipses{
+    width: 50%;
+    height:auto;
+    position: relative;
+    overflow: visible;
+  }
+
+  .connexion_ellipses{
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    height: 100vh; 
+    width: 100vw;
+  }
+
+  .input{
+    border-radius: 16px;
+    border-style: solid;
+    border-color: #c2c0c0;
+    border-width: 1px;
+    padding: 10px 16px 10px 16px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    width: 367px;
+  }
+
+  h1{
+    color: #000000;
+    text-align: center;
+    font-family: "Montserrat-Bold", sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .signup-label{
+    color: #000000;
+    text-align: left;
+    font-family: "Montserrat-Light", sans-serif;
+    font-size: 20px;
+    font-weight: 300;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .signup-form{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .radio-group {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    flex-direction: row; 
+    gap: 10px;
+  }
+  
+  input[type="radio"] {
+    display: none;
+  }
+  
+  .radio {
+    padding: 10px 16px;
+    border: 2px solid #023047;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    align-items: center;
+    height: fit-content;
+  }
+  
+  input[type="radio"]:checked + label {
+    background-color:#023047;
+    color: #fff;
+  }
+  
+  .signup-content{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+.input-name{
+    border-radius: 16px;
+    border-style: solid;
+    border-color: #c2c0c0;
+    border-width: 1px;
+    padding: 10px 16px 10px 16px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: center;
+    justify-content: flex-start;
+    align-self: stretch;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    width: 141px;
+  }
+
+  .name{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .name-familyname{
+    display: flex;
+    gap: 50px;
+  }
+  

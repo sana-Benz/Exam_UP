@@ -1,0 +1,52 @@
+import React, {useState, useEffect} from 'react'
+import ExamCard from './ExamCard'
+import '../Pages/style/ExamList.css';
+import { Link } from 'react-router-dom';
+
+
+
+const ExamineExamList = ({ listTitle}) => {
+
+    const [examCardsExamine, setExamCardsExamine] = useState([]);
+    const [id,setId] = useState(3); // a mettre en dynamique 
+
+    //fonction qui va chercher en bdd la liste d'examen que l'utilisateur a été invité pour les passer
+    const getExamineExams = async () => {
+        try {
+        const response = await fetch(`http://localhost:5000/Invitations_examens/${id}`);
+        const jasonData = await response.json(); //parse data
+        setExamCardsExamine(jasonData);
+        } catch (err) {
+        console.error(err.message);
+        }
+    };
+    useEffect(() => {
+        getExamineExams(); 
+    }, []); 
+
+
+    return (
+        <div className="examListContainer">
+          <div className="titleContainer">
+            <h1 className="listTitle">{listTitle} :</h1>
+          </div>
+      
+          <div className="cardsContainer">
+            {examCardsExamine.map((exam) => (
+              <Link key={exam.id} to={`/Instructions_examen`} className="examCardLink" style={{ textDecoration: 'none' }}>
+              <React.Fragment key={exam.id}>
+                <ExamCard
+                  titre={exam.titre}
+                  className="card"
+                  titleStyle="cardTitle"
+                />
+                
+              </React.Fragment>
+              </Link>
+            ))}
+          </div>
+        </div>
+      );
+}
+
+export default ExamineExamList

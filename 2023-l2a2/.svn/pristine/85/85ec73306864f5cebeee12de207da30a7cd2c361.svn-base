@@ -1,0 +1,125 @@
+import React, { useState, useEffect } from "react";
+import "../Pages/style/OptRepList.css";
+import { useParams} from "react-router-dom";
+import Form from 'react-bootstrap/Form';
+
+//ce composant est utilisé pour l'examen que l'examiné va passer
+const OptRepList = ({id_question , type_question , etat ,id_examen}) => {
+  const { id } = useParams();
+  // liste de réponses possibles pour une question
+  const [ArrayReponses, setArrayReponses] = useState([]);
+
+  // liste des ids des réponses de l'examine
+  const [idReponses, setIdReponses] = useState([]);
+
+  useEffect(() => {
+    const storedIdReponses = localStorage.getItem('idReponses');
+    if (storedIdReponses) {
+      setIdReponses(JSON.parse(storedIdReponses));
+    }
+  }, []);
+  
+  //fonction qui va chercher la liste des opt de rép de la bdd à partir de l'id de la question
+  useEffect(() => {
+    const getOptRep = async () => {
+      try {
+        const response = await fetch(`http://localhost:3001/reponses_possibles/${id_question}`);
+        const jasonData = await response.json(); 
+        if (Array.isArray(jasonData)) {
+          setArrayReponses(jasonData);
+        } else {
+          console.error("Pas de réponse de l'API");
+        }
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
+  
+    getOptRep(); 
+  }, [id_question]);
+
+  const handleExamineAnswers = (answerId) => {
+    setIdReponses((prevIdReponses) => {
+      const newIdReponses = type_question === 'QCM' ?
+        (prevIdReponses.some(item => item.id_option === answerId) ?
+          prevIdReponses.filter(item => item.id_option !== answerId) :
+          [...prevIdReponses, { id_question, id_option: answerId }]) :
+        [{ id_question, id_option: answerId }];
+
+    
+      localStorage.setItem('idReponses', JSON.stringify(newIdReponses));
+      console.log('voici les id des réponses cochées ', newIdReponses);
+
+      return newIdReponses;
+    });
+  };
+    
+  const onSubmitExam = async (e) => {
+    if (e) {
+      e.preventDefault();
+  }
+    try {
+      
+      const response = await fetch(
+        `http://localhost:3001/Envoyer_reponses_examine/${id}/${id_examen}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({idReponses }),
+        }
+      );
+      console.log('j attends la reponse');
+      await response.json();
+      console.log('je suis apres la reponse');
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  if (etat) {
+    onSubmitExam();
+  } 
+
+  return (
+    <div className="Big_Container">
+      <p className="consigne">Veuillez choisir la ou les réponse(s) correcte(s) :</p>
+      <div className="Smaller_Container">
+        <Form>
+          {ArrayReponses.map((reponse) => (
+            <div key={reponse.id} className="response_container">
+              {type_question === 'QCM' ? (
+                <div>
+                  <input
+                    type="checkbox"
+                    id={reponse.id}
+                    value={reponse.texte}
+                    className="reponse"
+                    onChange={() => handleExamineAnswers(reponse.id)}
+                    checked={idReponses.some(item => item.id_option === reponse.id)}
+                  />
+                  <label htmlFor={reponse.id}>{reponse.texte}</label>
+                </div>
+              ) : (
+                <div>
+                  <input
+                    type="radio"
+                    id={reponse.id}
+                    name="reponse"
+                    value={reponse.texte}
+                    className="reponseA"
+                    onChange={() => handleExamineAnswers(reponse.id)}
+                    checked={idReponses.some(item => item.id_option === reponse.id)}
+                  />
+                  <label htmlFor={reponse.id}>{reponse.texte}</label>
+                </div>
+              )}
+            </div>
+          ))}
+        </Form>
+      </div>
+    </div>
+  );
+};
+export default OptRepList;

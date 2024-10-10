@@ -1,0 +1,72 @@
+import React, {useState} from 'react';
+import {Container  } from "react-bootstrap"; 
+import ModalComponent from '../components/ModalComponent';
+import ExamList from "../components/ExamList"; 
+import HeaderExaminateur from '../components/HeaderExaminateur';
+import Form from 'react-bootstrap/Form';
+
+// a été modifié
+
+const HomeExaminateur = () => {
+  const [titre, setTitre] = useState('');
+  const [id_utilisateur, setIdUtilisateur] = useState(1); /* implémenter une fonction pour chercher le id à l'authentification */
+ 
+  // ce qui se passe quand on confirme la création de l'examen
+  const handleConfirm = async e => {
+    e.preventDefault(); 
+    console.log('Confirm button clicked');
+    try{
+      const body ={titre};
+      const response = await fetch(`http://localhost:5000/examen/${id_utilisateur}`  ,{
+        method : "POST",
+        headers : {"Content-Type": "application/json"},
+        body: JSON.stringify(body)
+      });
+      window.location = "/";
+    }catch(err){
+      console.error(err.message);
+    }
+  };
+
+  
+
+  return (
+    <div className="pageContainer">
+       <HeaderExaminateur/>
+      
+      <Container fluid className="contentContainer" style={{ backgroundColor: 'rgba(142, 202, 230, 0.34)', 
+      minHeight: '100vh' , padding: '20px 0' }}>
+
+        <div className="buttonContainer">
+
+          {/* Modal créer un examen*/}
+          <ModalComponent modalTitle = "création d'examen"  buttonTitle="+ créer un nouveau examen" 
+           buttonStyle="outline-info"  buttonSize="lg"  
+           modalBody=  {
+            <Form> 
+                <Form.Label>Titre:</Form.Label>
+                <Form.Control type="text" placeholder="Examen xxx" 
+                value={titre}
+                onChange={(e) => setTitre(e.target.value)} 
+                required/>
+            </Form>  
+              }
+
+           closeText="fermer" confirmText="confirmer"
+             handleConfirm={handleConfirm}
+           />
+
+        </div>
+
+
+          {/* liste des examens créés*/}
+        <ExamList listTitle="Examens créés" statut = "cree" />
+
+      </Container>
+
+    </div>
+  );
+}
+
+
+export default HomeExaminateur;

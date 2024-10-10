@@ -1,0 +1,21 @@
+import React from 'react'
+import Card from 'react-bootstrap/Card';
+import '../Pages/style/ExamCard.css';
+import { FaTrashAlt } from 'react-icons/fa';
+
+// carte d'examen prends en argument le nom de l'examen et son id
+
+const ExamCard = ({examName, examId}) => {
+  return (
+    <Card border="secondary" className="ExamCard" onClick={()=> console.log("exam card clicked")} >
+        <Card.Body>
+          <Card.Title className="cardTitle">{examName}</Card.Title>
+          <FaTrashAlt className="trash-icon"/>
+
+        </Card.Body>
+      </Card>
+  )
+}
+
+export default ExamCard
+

@@ -1,0 +1,42 @@
+.ellipses{
+    width: 50%;
+    height:auto;
+    position: relative;
+    overflow: visible;
+  }
+
+  .error-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: auto;
+  }
+
+  .error_ellipses{
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    height: 100vh; 
+    width: 100vw;
+  }
+
+  h1{
+    color: #000000;
+    text-align: center;
+    font-family: "Montserrat-Bold", sans-serif;
+    font-size: 40px;
+    font-weight: 700;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h2{
+    font-family: "Montserrat-Bold", sans-serif;
+    color: #000000;
+    text-align: center;
+  }

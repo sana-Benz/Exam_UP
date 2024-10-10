@@ -1,0 +1,80 @@
+import React from "react";
+import HeaderExamine from "../components/HeaderExamine";
+import { Container } from "react-bootstrap";
+import "./style/Instructions.css";
+import Button from "../components/button";
+
+const Instructions = () => {
+  return (
+    <div>
+      <HeaderExamine />
+
+      <Container
+        fluid
+        className="contentContainer"
+        style={{
+          backgroundColor: "rgba(142, 202, 230, 0.34)",
+          minHeight: "100vh",
+          padding: "20px 0",
+        }}
+      >
+        <div className="instructions-container">
+          <div className="header">
+            <span>Examen POO</span>
+          </div>
+          <div className="content">
+            <div className="date">
+              Ouvert le 19/04/2024 <br />
+              Ferme le 20/04/2024
+            </div>
+
+            <div className="tentative">
+              Tentatives autorisées : 1 <br />
+              Temps disponible : 10 min
+            </div>
+
+            <div className="instructions">
+              <h1>Consignes d'examen :</h1>
+              <p>Veuillez répondre à toutes les questions.</p>
+              <p>
+                Vous ne pouvez sélectionner qu'une seule réponse aux questions à
+                choix unique, et plusieurs réponses aux questions à choix
+                multiple.
+              </p>
+              <p>
+                Assurez-vous d'examiner attentivement vos réponses avant de
+                soumettre le test.
+              </p>
+              <p>
+                Après avoir terminé l'examen, appuyez sur le bouton "Soumettre"
+                pour enregistrer vos réponses. Vous ne pourrez pas modifier vos
+                réponses après la soumission de l'examen.
+              </p>
+              <p>
+                Si le temps autorisé s'est écoulé, l'examen est soumis
+                automatiquement.
+              </p>
+              <p>
+                Toutes les réponses doivent être personnelles. Toute forme de
+                tricherie sera sévèrement sanctionnée.
+              </p>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "30vh", 
+                }}
+              >
+                <Button text={"Démarrer une tentative"} color={"#FB8500"} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </div>
+  );
+};
+
+export default Instructions;

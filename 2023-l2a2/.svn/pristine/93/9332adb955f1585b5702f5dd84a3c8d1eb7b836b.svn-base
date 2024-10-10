@@ -1,0 +1,16 @@
+.Box{
+    margin-bottom: 20px;
+    margin-right: 20px;
+    margin-left: 20px;
+    padding: 20px;
+    border-radius: 16px; 
+    border: 2px solid rgba(2, 48, 71, 1); 
+    background: rgba(142, 202, 230, 0.34); 
+
+    font-family: Montserrat;
+  font-size: 23px;
+  color: #023047;
+  font-weight: 600;
+  line-height: 25px;
+}
+

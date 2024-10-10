@@ -1,0 +1,24 @@
+import React from 'react'
+import {Container  } from "react-bootstrap"; 
+import HeaderExamine from "../components/HeaderExamine"
+import ExamineExamList from '../components/ExamineExamList';
+
+
+const HomeExamine = () => {
+  //l'id de l'examine est ici statique étudiante 3 invité à l'examen avec id 27
+  let id=3; //a modifier
+  return (
+    <div>
+      <HeaderExamine/>
+      
+      <Container fluid className="contentContainer" style={{ backgroundColor: 'rgba(142, 202, 230, 0.34)', 
+      minHeight: '100vh' , padding: '20px 0' }}>
+        
+        <ExamineExamList listTitle={"Liste des examens"}/>
+
+      </Container>
+    </div>
+  )
+}
+
+export default HomeExamine

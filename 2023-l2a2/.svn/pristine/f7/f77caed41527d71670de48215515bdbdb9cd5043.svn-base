@@ -1,0 +1,86 @@
+import React, {useEffect, useState} from 'react'
+import HeaderExaminateur from "../components/HeaderExaminateur.jsx"
+import Table from "react-bootstrap/Table";
+import AddParticipant from '../components/AddParticipant.jsx';
+import { useParams} from 'react-router-dom';
+import { Container, Button } from "react-bootstrap";
+
+
+const ParticipantsList = () => {
+  const { id, id_examen } = useParams();
+  
+  const [participants, setParticipants] = useState([]);
+
+  
+  //fonction qui va chercher les participants à cet examen déjà dans la bdd
+  //fonctionne
+  const getParticipants = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/participants/${id}/${id_examen}`);
+      const jasonData = await response.json(); 
+      setParticipants(jasonData);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  useEffect(() => {
+    getParticipants(); 
+  }, []);
+
+
+  //supprimer un participant de la liste
+  //fonctionne
+  const deleteParticipant = async (id_examine) => {
+    try {
+      await fetch(`http://localhost:3001/participants/${id}/${id_examine}`, {
+        method: "DELETE"
+      });
+  
+      // recharger la liste de participant après suppression
+      const response = await fetch(`http://localhost:3001/participants/${id}/${id_examen}`);
+      const data = await response.json();
+      setParticipants(data);
+
+      setParticipants(participants.filter(participant => participant.id !== id_examine));
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+
+  return (
+    
+      <div className="pageContainer">
+
+      <HeaderExaminateur/>
+
+      <Container fluid className="contentContainer" style={{ backgroundColor: "rgba(142, 202, 230, 0.34)", minHeight: "100vh", padding: '20px 0' }}>
+        <AddParticipant id={id} id_examen={id_examen}/>
+        <Table striped bordered hover className="table mt-5 ">
+          <thead>
+            <tr>
+              <th>Id examiné</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>  </th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(participants) && participants.map((participant) => (
+              <tr key={participant.id}>
+                <td>{participant.id}</td>
+                <td>{participant.nom}</td>
+                <td>{participant.prenom}</td>
+                <td>
+                  <Button variant="outline-danger" onClick={() => deleteParticipant(participant.id)}>Supprimer</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Container>
+      </div>
+  );
+}
+
+export default ParticipantsList
