@@ -36,4 +36,8 @@ La maquette utilisée pour cette application est disponible sur Figma https://ww
 3. Démarrer le serveur :
    ```bash
    npm start
+
+## Contributeurs 
+
+Site web réalisé avec le collègue Baddredine dans le cadre de projet de L2.
    
